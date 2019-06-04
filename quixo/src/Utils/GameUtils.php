@@ -12,7 +12,7 @@ class GameUtils
     const N_COLS = 5;
 
     /**
-     * getEmptyBoard
+     * Get an empty board of n_rows and n_cols
      *
      * @param  int $n_rows
      * @param  int $n_cols

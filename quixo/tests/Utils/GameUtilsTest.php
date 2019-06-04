@@ -8,7 +8,7 @@ class GameUtilsTest extends TestCase
 {
 
     /**
-     * testGetEmptyBoard
+     * Test that game utils return an empty board with the good numbers of rows & cols
      *
      * @return void
      */

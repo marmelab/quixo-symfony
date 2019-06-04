@@ -24,18 +24,6 @@ class GameRepository extends EntityRepository
     }
 
     /**
-     * findById
-     *
-     * @param  int $id
-     *
-     * @return Game
-     */
-    public function findById(int $id): Game
-    {
-        return $this->em->find('App:Game', $id);
-    }
-
-    /**
      * remove
      *
      * @param  int $id

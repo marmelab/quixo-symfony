@@ -17,18 +17,18 @@ class AppExtension extends AbstractExtension
     public function getFilters()
     {
         return [
-            new TwigFilter('getSymbol', [$this, 'getSymbol']),
+            new TwigFilter('getCubeSymbol', [$this, 'getCubeSymbol']),
         ];
     }
 
     /**
-     * getSymbol
+     * Return the symbol of the cube
      *
      * @param  int $value
      *
      * @return string
      */
-    public function getSymbol(int $value): string
+    public function getCubeSymbol(int $value): string
     {
         if ($value === GameUtils::CIRCLE_TEAM) {
             return 'circle';

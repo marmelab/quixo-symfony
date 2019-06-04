@@ -8,7 +8,7 @@ use App\Utils\GameUtils;
 class GameControllerTest extends WebTestCase
 {
     /**
-     * testNewGame
+     * Test that new game page return a 200 response and an empty board
      *
      * @return void
      */

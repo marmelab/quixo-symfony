@@ -10,7 +10,7 @@ use App\Utils\GameUtils;
 class GameController
 {
     /**
-     * newGame
+     * Create a new board and display it
      *
      * @param Twig_Environment $twig
      * @param GameRepository   $gameRepository
