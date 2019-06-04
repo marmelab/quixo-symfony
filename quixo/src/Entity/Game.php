@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Cube;
 use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\GameRepository")
@@ -56,7 +57,7 @@ class Game
         $board = [];
         for ($x = 0; $x < self::N_ROWS; $x++) {
             for ($y =0 ; $y < self::N_COLS; $y++) {
-                $board[$x][$y] = self::NEUTRAL_VALUE;
+                $board[$x][$y] = new Cube();
             }
         }
         return $board;
