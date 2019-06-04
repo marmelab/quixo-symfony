@@ -6,7 +6,9 @@ language: php
 services:
   - docker
 
-install: make install
+install:
+  - make start
+  - make install
 
 script: make test
 

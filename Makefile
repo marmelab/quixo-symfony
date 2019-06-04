@@ -17,7 +17,9 @@ init-db: ## Create and setup the database
 	docker-compose exec php \
 		bash -ci './bin/console doctrine:database:create --if-not-exists && ./bin/console doctrine:schema:update --force'
 
-install: composer-install ## Install docker environnement
+install:
+	$(MAKE) composer-install
+	$(MAKE) init-db
 
 update: composer-update ## Update docker environnement
 
@@ -31,4 +33,4 @@ build: ## Build the dockers images
 	docker-compose build
 
 test: ## Test the code
-	docker-compose run --no-deps --rm php bin/phpunit
+	docker-compose exec php bin/phpunit
