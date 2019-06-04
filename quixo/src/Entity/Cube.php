@@ -1,16 +1,26 @@
 <?php
 
 namespace App\Entity;
+use Doctrine\ORM\Mapping as ORM;
 
 class Cube
 {
+    const NEUTRAL_VALUE = 0;
+
+    const CROSS_TEAM = 1;
+
+    const CIRCLE_TEAM = -1;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
     private $value;
 
     private $movable;
 
     private $selected;
 
-    public function __construct($value=false, $movable=false, $selected=false)
+    public function __construct($value=self::NEUTRAL_VALUE, $movable=false, $selected=false)
     {
         $this->value = $value;
         $this->movable = $movable;

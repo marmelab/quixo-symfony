@@ -2,20 +2,14 @@
 
 namespace App\Entity;
 
-use App\Entity\Cube;
 use Doctrine\ORM\Mapping as ORM;
+
 /**
  * @ORM\Entity(repositoryClass="App\Repository\GameRepository")
  * @ORM\Table
  */
 class Game
 {
-    const N_ROWS = 5;
-    const N_COLS = 5;
-
-    const NEUTRAL_VALUE = 0;
-    const CROSS_TEAM = 1;
-    const CIRCLE_TEAM = -1;
 
     /**
      * @ORM\Column(type="integer")
@@ -24,42 +18,34 @@ class Game
      */
     private $id;
 
-    /** @ORM\Column(type="json_array") */
+    /** @ORM\Column(type="json") */
     private $board;
 
     public function __construct(
-        int $id,
         array $board
     ) {
-        $this->id = $id;
         $this->board = $board;
     }
 
-    public function getId() {
+    public function getId()
+    {
         return $this->id;
     }
 
-    public function setId(int $id) {
+    public function setId(int $id)
+    {
         $this->id = $id;
         return $this;
     }
 
-    public function getBoard() {
+    public function getBoard()
+    {
         return $this->board;
     }
 
-    public function setBoard(array $board) {
+    public function setBoard(array $board)
+    {
         $this->board = $board;
         return $this;
-    }
-
-    public static function getEmptyBoard() {
-        $board = [];
-        for ($x = 0; $x < self::N_ROWS; $x++) {
-            for ($y =0 ; $y < self::N_COLS; $y++) {
-                $board[$x][$y] = new Cube();
-            }
-        }
-        return $board;
     }
 }

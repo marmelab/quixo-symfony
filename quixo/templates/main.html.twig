@@ -3,7 +3,7 @@
     <div class="board">
         {% for line in board|default([]) %}
             {% for tile in line|default([]) %}
-                <div class="cube cube-{{tile.value|getSymbol}}">
+                <div class="cube cube-{{tile|getSymbol}}">
                 </div>
             {% endfor %}
             <div></div>

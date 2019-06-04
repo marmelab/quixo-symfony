@@ -5,7 +5,7 @@ namespace App\Twig;
 
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
-use App\Entity\Game;
+use App\Entity\Cube;
 
 class AppExtension extends AbstractExtension
 {
@@ -18,10 +18,10 @@ class AppExtension extends AbstractExtension
 
     public function getSymbol($value)
     {
-        if ($value == Game::CIRCLE_TEAM) {
+        if ($value == Cube::CIRCLE_TEAM) {
             return 'circle';
         }
-        if ($value == Game::CROSS_TEAM) {
+        if ($value == Cube::CROSS_TEAM) {
             return 'cross';
         }
         return 'neutral';
