@@ -10,8 +10,6 @@ services:
     depends_on:
       - postgres
       - nginx
-    environment:
-      WAIT_HOSTS: postgres:5432
   nginx:
     image: nginx:alpine
     ports:
