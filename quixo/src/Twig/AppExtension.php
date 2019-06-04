@@ -5,10 +5,15 @@ namespace App\Twig;
 
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
-use App\Entity\Cube;
+use App\Utils\GameUtils;
 
 class AppExtension extends AbstractExtension
 {
+    /**
+     * getFilters
+     *
+     * @return void
+     */
     public function getFilters()
     {
         return [
@@ -16,12 +21,19 @@ class AppExtension extends AbstractExtension
         ];
     }
 
-    public function getSymbol($value)
+    /**
+     * getSymbol
+     *
+     * @param  int $value
+     *
+     * @return string
+     */
+    public function getSymbol(int $value): string
     {
-        if ($value == Cube::CIRCLE_TEAM) {
+        if ($value === GameUtils::CIRCLE_TEAM) {
             return 'circle';
         }
-        if ($value == Cube::CROSS_TEAM) {
+        if ($value === GameUtils::CROSS_TEAM) {
             return 'cross';
         }
         return 'neutral';

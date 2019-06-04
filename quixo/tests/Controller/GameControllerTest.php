@@ -7,7 +7,12 @@ use App\Utils\GameUtils;
 
 class MainControllerTest extends WebTestCase
 {
-    public function testNewGame()
+    /**
+     * testNewGame
+     *
+     * @return void
+     */
+    public function testNewGame(): void
     {
         $client = static::createClient();
         $crawler = $client->request('GET', '/');

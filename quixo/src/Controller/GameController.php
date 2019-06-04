@@ -9,7 +9,15 @@ use App\Utils\GameUtils;
 
 class GameController
 {
-    public function newGame(\Twig_Environment $twig, GameRepository $gameRepository)
+    /**
+     * newGame
+     *
+     * @param Twig_Environment $twig
+     * @param GameRepository   $gameRepository
+     *
+     * @return Response
+     */
+    public function newGame(\Twig_Environment $twig, GameRepository $gameRepository): Response
     {
         $board = GameUtils::getEmptyBoard();
         $game = new Game($board);

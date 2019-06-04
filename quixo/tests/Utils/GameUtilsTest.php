@@ -7,7 +7,12 @@ use App\Utils\GameUtils;
 class GameUtilsTest extends TestCase
 {
 
-    public function testGetEmptyBoard()
+    /**
+     * testGetEmptyBoard
+     *
+     * @return void
+     */
+    public function testGetEmptyBoard(): void
     {
         $emptyBoard = GameUtils::getEmptyBoard();
         $this->assertEquals(count($emptyBoard), GameUtils::N_ROWS);

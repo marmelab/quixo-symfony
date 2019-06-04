@@ -21,29 +21,59 @@ class Game
     /** @ORM\Column(type="json") */
     private $board;
 
-    public function __construct(
-        array $board
-    ) {
+    /**
+     * __construct
+     *
+     * @param  int $id
+     *
+     * @return void
+     */
+    public function __construct(array $board)
+    {
         $this->board = $board;
     }
 
-    public function getId()
+    /**
+     * getId
+     *
+     * @return int
+     */
+    public function getId(): int
     {
         return $this->id;
     }
 
-    public function setId(int $id)
+    /**
+     * setId
+     *
+     * @param  int $id
+     *
+     * @return Game
+     */
+    public function setId(int $id): Game
     {
         $this->id = $id;
         return $this;
     }
 
-    public function getBoard()
+    /**
+     * getBoard
+     *
+     * @return array
+     */
+    public function getBoard(): array
     {
         return $this->board;
     }
 
-    public function setBoard(array $board)
+    /**
+     * setBoard
+     *
+     * @param  array $board
+     *
+     * @return void
+     */
+    public function setBoard(array $board): Game
     {
         $this->board = $board;
         return $this;
