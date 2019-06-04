@@ -90,9 +90,6 @@
             "config/packages/dev/easy_log_handler.yaml"
         ]
     },
-    "egulias/email-validator": {
-        "version": "2.1.8"
-    },
     "facebook/webdriver": {
         "version": "1.6.0"
     },
@@ -143,9 +140,6 @@
         "files": [
             "config/packages/sensio_framework_extra.yaml"
         ]
-    },
-    "swiftmailer/swiftmailer": {
-        "version": "v6.2.1"
     },
     "symfony/asset": {
         "version": "v4.3.0"
@@ -407,35 +401,8 @@
     "symfony/stopwatch": {
         "version": "v4.3.0"
     },
-    "symfony/swiftmailer-bundle": {
-        "version": "2.5",
-        "recipe": {
-            "repo": "github.com/symfony/recipes",
-            "branch": "master",
-            "version": "2.5",
-            "ref": "3db029c03e452b4a23f7fc45cec7c922c2247eb8"
-        },
-        "files": [
-            "config/packages/dev/swiftmailer.yaml",
-            "config/packages/swiftmailer.yaml",
-            "config/packages/test/swiftmailer.yaml"
-        ]
-    },
     "symfony/test-pack": {
         "version": "v1.0.5"
-    },
-    "symfony/translation": {
-        "version": "3.3",
-        "recipe": {
-            "repo": "github.com/symfony/recipes",
-            "branch": "master",
-            "version": "3.3",
-            "ref": "1fb02a6e1c8f3d4232cce485c9afa868d63b115a"
-        },
-        "files": [
-            "config/packages/translation.yaml",
-            "translations/.gitignore"
-        ]
     },
     "symfony/translation-contracts": {
         "version": "v1.1.2"

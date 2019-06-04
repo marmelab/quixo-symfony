@@ -1,8 +1,8 @@
 {
-    "name": "symfony/website-skeleton",
+    "name": "marmelab/quixo-symfony",
     "type": "project",
     "license": "MIT",
-    "description": "A skeleton to start a new Symfony website",
+    "description": "The quixo game in symfony",
     "require": {
         "php": "^7.1.3",
         "ext-ctype": "*",
@@ -22,8 +22,6 @@
         "symfony/process": "*",
         "symfony/security-bundle": "*",
         "symfony/serializer-pack": "*",
-        "symfony/swiftmailer-bundle": "^3.1",
-        "symfony/translation": "*",
         "symfony/twig-bundle": "*",
         "symfony/validator": "*",
         "symfony/web-link": "*",
