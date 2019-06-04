@@ -7,7 +7,6 @@ services:
   - docker
 
 install:
-  - make start
   - make install
 
 script: make test

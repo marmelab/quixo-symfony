@@ -9,6 +9,9 @@ services:
       - ./quixo:/quixo
     depends_on:
       - postgres
+      - nginx
+    environment:
+      WAIT_HOSTS: postgres:5432
   nginx:
     image: nginx:alpine
     ports:
@@ -17,8 +20,6 @@ services:
       - ./quixo:/quixo
       - ./docker/nginx/site.conf:/etc/nginx/conf.d/default.conf
       - ./logs:/var/log/nginx/
-    depends_on:
-      - php
   postgres:
     image: postgres:11
     environment:
@@ -26,6 +27,6 @@ services:
       - POSTGRES_PASSWORD=quixo
       - POSTGRES_DB=quixo
     ports:
-        - "5433:5432"
+        - "5432:5432"
     expose:
         - "5432"
