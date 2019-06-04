@@ -1,0 +1,13 @@
+.board {
+    text-align: center;
+    padding-top: 5%;
+}
+
+.cube {
+    width: 100px;
+    height: 100px;
+    margin: 2px 2px;
+    display: inline-block;
+    border-radius: 5%;
+    border: solid 1px black;
+}

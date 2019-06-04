@@ -1,0 +1,17 @@
+# https://travis-ci.com/marmelab/quixo-python/
+
+sudo: required
+language: php
+
+services:
+  - docker
+
+install:
+  - make start # Ugly fix to have postgres boot up before install
+  - make install
+
+script: make test
+
+branches:
+  only:
+    - master
