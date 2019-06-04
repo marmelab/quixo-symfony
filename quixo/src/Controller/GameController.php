@@ -3,15 +3,22 @@
 namespace App\Controller;
 
 use Symfony\Component\HttpFoundation\Response;
+use App\Entity\Game;
 
 class GameController
 {
+
+    private $twig;
+
+    public function __construct(\Twig_Environment $twig)
+    {
+        $this->twig = $twig;
+    }
+
     public function index()
     {
-        $number = random_int(0, 100);
+        $board = Game::getEmptyBoard();
 
-        return new Response(
-            '<html><body>Lucky number: '.$number.'</body></html>'
-        );
+        return new Response($this->twig->render('main.html.twig', [ 'board' => $board ]));
     }
 }

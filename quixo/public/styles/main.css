@@ -1,0 +1,7 @@
+.cube {
+    width: 100px;
+    height: 100px;
+    background: red;
+    margin: 2px 2px;
+    display: inline-block;
+}

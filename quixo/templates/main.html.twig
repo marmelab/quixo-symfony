@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+{% block content %}
+    {% for line in board|default([]) %}
+        {% for tile in line|default([]) %}
+            <div class="cube cube-{{tile|getSymbol}}">
+                0
+            </div>
+        {% endfor %}
+        <div></div>
+    {% endfor %}
+{% endblock %}
