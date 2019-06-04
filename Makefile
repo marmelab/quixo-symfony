@@ -10,8 +10,7 @@ composer-install: ## Run composer install within the host
 		php bash -ci '/usr/bin/composer install'
 
 init-db: ## Create and setup the database
-	docker-compose up -d postgres
-	docker-compose run --no-deps --rm php \
+	docker-compose run --rm php \
 		bash -ci './bin/console doctrine:database:create --if-not-exists && ./bin/console doctrine:schema:update --force'
 	docker-compose down
 
