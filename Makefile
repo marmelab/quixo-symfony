@@ -14,15 +14,14 @@ composer-update: ## Run composer update within the host
 		php bash -ci '/usr/bin/composer update'
 
 init-db: ## Create and setup the database
-	docker-compose run --rm php \
+	docker-compose exec php \
 		bash -ci './bin/console doctrine:database:create --if-not-exists && ./bin/console doctrine:schema:update --force'
-	docker-compose down
 
 install: composer-install ## Install docker environnement
 
 update: composer-update ## Update docker environnement
 
-run: ## Start the server
+start: ## Start the server
 	docker-compose up -d
 
 stop: ## Stop the server
