@@ -26,6 +26,6 @@ services:
       - POSTGRES_PASSWORD=quixo
       - POSTGRES_DB=quixo
     ports:
-        - "5432:5432"
+        - "5433:5432"
     expose:
         - "5432"
