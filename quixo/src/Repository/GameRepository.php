@@ -9,7 +9,7 @@ use App\Entity\Game;
 class GameRepository extends EntityRepository
 {
 
-    private $em;
+    protected $em;
 
     /**
      * __construct
@@ -20,6 +20,7 @@ class GameRepository extends EntityRepository
      */
     public function __construct(EntityManagerInterface $em)
     {
+        parent::__construct($em, $em->getClassMetadata('App:Game'));
         $this->em = $em;
     }
 
