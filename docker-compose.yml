@@ -20,7 +20,7 @@ services:
     depends_on:
       - php
   postgres:
-    image: postgres:9.6
+    image: postgres:11
     environment:
       - POSTGRES_USER=quixo
       - POSTGRES_PASSWORD=quixo
