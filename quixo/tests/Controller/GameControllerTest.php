@@ -5,7 +5,7 @@ namespace App\Tests\Controller;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use App\Utils\GameUtils;
 
-class MainControllerTest extends WebTestCase
+class GameControllerTest extends WebTestCase
 {
     /**
      * testNewGame
