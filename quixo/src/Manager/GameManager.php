@@ -4,16 +4,36 @@ namespace App\Manager;
 
 use App\Entity\Coords;
 use App\Entity\Cube;
+use App\Repository\GameRepository;
+use App\Entity\Game;
 
 class GameManager
 {
-
     const NEUTRAL_VALUE = 0;
     const CROSS_TEAM = 1;
     const CIRCLE_TEAM = -1;
 
-    const N_ROWS = 5;
-    const N_COLS = 5;
+    private $gameRepository;
+
+    public function __construct(GameRepository $gameRepository)
+    {
+        $this->gameRepository = $gameRepository;
+    }
+
+    /**
+     * Create a new game and return id
+     *
+     * @return int the id of the game
+     */
+    public function createGame(): int
+    {
+        $game = new Game();
+        $newBoard = $this->getEmptyBoard($game->getRows(), $game->getCols());
+        $game->setBoard($newBoard);
+        $this->gameRepository->save($game);
+
+        return $game->getId();
+    }
 
     /**
      * Get an empty board of n_rows and n_cols
@@ -23,7 +43,7 @@ class GameManager
      *
      * @return array
      */
-    public function getEmptyBoard(int $n_rows=self::N_ROWS, int $n_cols=self::N_COLS): array
+    public function getEmptyBoard(int $n_rows, int $n_cols): array
     {
         $board = [];
         for ($x = 0; $x < $n_rows; $x++) {
@@ -37,19 +57,20 @@ class GameManager
     /**
      * Return an array of movables cubes
      *
-     * @param  array $board
+     * @param  Game  $game
      * @param  int   $team
      *
      * @return array
      */
-    public function getMovables(array $board, int $team=self::NEUTRAL_VALUE): array
+    public function getMovables(Game $game, int $team=self::NEUTRAL_VALUE): array
     {
+        $board = $game->getBoard();
         $movables = [];
         for ($x=0; $x < count($board); $x++) {
             for ($y=0; $y < count($board[$x]); $y++) {
                 $coords = new Coords($x, $y);
                 $cube = new Cube($coords, $board[$x][$y]);
-                if ($this->isMovableCube($cube, $team)) {
+                if ($this->isMovableCube($game, $cube, $team)) {
                     $movables[] = $cube;
                 }
             }
@@ -65,27 +86,27 @@ class GameManager
      *
      * @return bool
      */
-    public function isOutsideCube(Coords $coords): bool
+    public function isOutsideCube(Game $game, Coords $coords): bool
     {
         return
             $coords->x === 0 ||
-            $coords->x === self::N_ROWS -1 ||
+            $coords->x === $game->getRows() -1 ||
             $coords->y === 0 ||
-            $coords->y === self::N_COLS - 1;
+            $coords->y === $game->getCols() - 1;
     }
 
     /**
      * Return true if the cube is movable by the player
-     *
+     * @param  Game  $game
      * @param  Cube  $cube
      * @param  int   $team
      *
      * @return bool
      */
-    public function isMovableCube(Cube $cube, int $team): bool
+    public function isMovableCube(Game $game, Cube $cube, int $team): bool
     {
         $isAllowedCube = $cube->getValue() === 0 || $cube->getValue() === $team;
-        return $this->isOutsideCube($cube->getCoords()) && $isAllowedCube;
+        return $this->isOutsideCube($game, $cube->getCoords()) && $isAllowedCube;
     }
 
 
@@ -98,9 +119,10 @@ class GameManager
      *
      * @return array
      */
-    public function moveCube(array $board, Coords $coords, int $value): array
+    public function moveCube(Game $game, Coords $coords, int $value): array
     {
-        $coordsEnd = $this->getOppositeCube($coords);
+        $board = $game->getBoard();
+        $coordsEnd = $this->getOppositeCube($game, $coords);
         if ($coords->x === $coordsEnd->x) {
             $board = $this->shiftRow($board, $value, [
                 'rowIndex' => $coords->x,
@@ -124,9 +146,9 @@ class GameManager
     /**
      * Shift the row from xStart to xEnd
      *
-     * @param  mixed $board
-     * @param  mixed $value
-     * @param  mixed $coords
+     * @param  mixed  $board
+     * @param  int    $value
+     * @param  array  $coords
      *
      * @return array
      */
@@ -150,11 +172,12 @@ class GameManager
      * Get the opposite cube
      * This is a tmp function waiting for the player to choose himself the direction
      *
+     * @param  Game   $game
      * @param  Coords $coords
      *
      * @return Coords
      */
-    public function getOppositeCube(Coords $coords): Coords
+    public function getOppositeCube(Game $game, Coords $coords): Coords
     {
         $x = $coords->x;
         $y = $coords->y;
@@ -162,16 +185,18 @@ class GameManager
         $xEnd = $x;
         $yEnd = $y;
 
+        dump($game->getRows());
+        dump($game->getCols());
         if ($x === 0) {
-            $xEnd = self::N_ROWS - 1;
+            $xEnd = $game->getRows() - 1;
         }
-        if ($x === self::N_ROWS - 1) {
+        if ($x === $game->getRows() - 1) {
             $xEnd = 0;
         }
         if ($y === 0) {
-            $yEnd = self::N_COLS - 1;
+            $yEnd = $game->getCols() - 1;
         }
-        if ($y === self::N_COLS - 1) {
+        if ($y === $game->getCols() - 1) {
             $yEnd = 0;
         }
         return new Coords($xEnd, $yEnd);

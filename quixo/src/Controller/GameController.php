@@ -15,18 +15,15 @@ class GameController extends Controller
     /**
      * Create a new board and display it
      *
-     * @param Twig_Environment $twig
      * @param GameRepository   $gameRepository
      *
      * @return Response
      */
-    public function newGame(GameRepository $gameRepository, GameManager $gameManager): Response
+    public function newGame(GameManager $gameManager): Response
     {
-        $board =$gameManager->getEmptyBoard();
-        $game = new Game($board);
-        $gameRepository->save($game);
+        $gameId = $gameManager->createGame();
 
-        return $this->redirectToRoute('game', ['id' => $game->getId()]);
+        return $this->redirectToRoute('game', ['id' => $gameId]);
     }
 
     /**
@@ -48,12 +45,12 @@ class GameController extends Controller
                 $request->request->get('x'),
                 $request->request->get('y')
             );
-            $board = $gameManager->moveCube($game->getBoard(), $coordsSelected, GameManager::CROSS_TEAM);
+            $board = $gameManager->moveCube($game, $coordsSelected, GameManager::CROSS_TEAM);
             $game->setBoard($board);
             $gameRepository->save($game);
         }
 
-        $movables = $gameManager->getMovables($game->getBoard(), GameManager::CROSS_TEAM);
+        $movables = $gameManager->getMovables($game, GameManager::CROSS_TEAM);
 
         return new Response($twig->render('game.html.twig', [
             'game' => $game,
