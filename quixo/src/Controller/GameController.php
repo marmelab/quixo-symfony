@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 use App\Entity\Game;
 use App\Repository\GameRepository;
 use App\Utils\GameUtils;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 class GameController extends Controller
 {
@@ -41,6 +42,20 @@ class GameController extends Controller
         $game = $gameRepository->findOneBy(['id' => $id]);
         $movables = GameUtils::getMovables($game->getBoard());
 
-        return new Response($twig->render('game.html.twig', [ 'game' => $game, 'movables' => $movables ]));
+        $formBuild = $this->createFormBuilder();
+        foreach ($movables as $movable) {
+            $coords = $movable->getCoords();
+            $formBuild->add($coords->__toString(), SubmitType::class, [
+                'label' => false,
+                'attr' => [ 'class' => 'movable-cube']
+            ]);
+        }
+
+        $form = $formBuild->getForm();
+        return new Response($twig->render('game.html.twig', [
+            'game' => $game,
+            'movables' => $movables,
+            'form' => $form->createView(),
+        ]));
     }
 }

@@ -1,12 +1,16 @@
 {% extends 'base.html.twig' %}
 {% block content %}
-    <div class="board">
-        {% for line in game.board|default([]) %}
-            {% for tile in line|default([]) %}
-                <div class="cube cube-{{tile|getCubeSymbol}}">
-                </div>
+    {% spaceless %}
+        <table class="board">
+            {% for line in game.board|default([]) %}
+                <tr>
+                {% set x = loop.index0 %}
+                {% for cube in line|default([]) %}
+                    {% set y = loop.index0 %}
+                    <td>{% include 'cube.html.twig' with { x:x, y:y } %}</td>
+                {% endfor %}
+                </tr>
             {% endfor %}
-            <div></div>
-        {% endfor %}
-    </div>
+        </table>
+    {% endspaceless %}
 {% endblock %}

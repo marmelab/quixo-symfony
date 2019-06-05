@@ -18,6 +18,7 @@ class AppExtension extends AbstractExtension
     {
         return [
             new TwigFilter('getCubeSymbol', [$this, 'getCubeSymbol']),
+            new TwigFilter('isCubeInMovables', [$this, 'isCubeInMovables']),
         ];
     }
 
@@ -37,5 +38,16 @@ class AppExtension extends AbstractExtension
             return 'cross';
         }
         return 'neutral';
+    }
+
+    public function isCubeInMovables(array $movables, int $x, int $y)
+    {
+        foreach ($movables as $cube) {
+            $coords = $cube->getCoords();
+            if ($coords->getX() === $x && $coords->getY() === $y) {
+                return true;
+            }
+        }
+        return false;
     }
 }

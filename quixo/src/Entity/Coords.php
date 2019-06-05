@@ -53,4 +53,9 @@ class Coords
 
         return $this;
     }
+
+    public function __toString()
+    {
+        return $this->x.'_'.$this->y;
+    }
 }

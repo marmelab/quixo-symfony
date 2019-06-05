@@ -1,3 +1,6 @@
-{% if isMovable %}
-    <a href="/select-cube/{{ coords.x }}/{{ coords.y}}">
-    </a>
+<div class="cube cube-{{cube|getCubeSymbol}}">
+    {% if movables|isCubeInMovables(x, y) %}
+        {% set x_y = x ~ '_' ~ y %}
+        {{ form_widget(form[x_y]) }}
+    {% endif %}
+</div>
