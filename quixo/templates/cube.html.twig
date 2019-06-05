@@ -1,6 +1,14 @@
 <div class="cube cube-{{cube|getCubeSymbol}}">
     {% if movables|isCubeInMovables(x, y) %}
-        {% set x_y = x ~ '_' ~ y %}
-        {{ form_widget(form[x_y]) }}
+        <form
+            class="movable-cube"
+            action="{{ url('game', { id: game.id }) }}"
+            method="post"
+        >
+            <input type="hidden" name="token" value="{{ csrf_token('move-cube') }}" />
+            <input type="hidden" name="x" value="{{ x }}" />
+            <input type="hidden" name="y" value="{{ y }}" />
+            <button class="movable-cube" type="submit"></button>
+        </form>
     {% endif %}
 </div>

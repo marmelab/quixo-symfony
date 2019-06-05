@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 use App\Entity\Game;
 use App\Repository\GameRepository;
 use App\Utils\GameUtils;
@@ -37,16 +38,19 @@ class GameController extends Controller
      *
      * @return Response
      */
-    public function game(int $id, \Twig_Environment $twig, GameRepository $gameRepository): Response
+    public function game(Request $request, int $id, \Twig_Environment $twig, GameRepository $gameRepository): Response
     {
         $game = $gameRepository->findOneBy(['id' => $id]);
         $movables = GameUtils::getMovables($game->getBoard());
-        $form = $this->createForm(BoardType::class, [], ['data' => $movables]);
+        $submittedToken = $request->request->get('token');
 
+        if ($this->isCsrfTokenValid('move-cube', $submittedToken)) {
+            $x = $request->request->get('x');
+            $y = $request->request->get('y');
+        }
         return new Response($twig->render('game.html.twig', [
             'game' => $game,
             'movables' => $movables,
-            'form' => $form->createView(),
         ]));
     }
 }

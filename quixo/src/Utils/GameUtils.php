@@ -66,12 +66,12 @@ class GameUtils
      */
     public static function isOutsideCube(Cube $cube): bool
     {
-        $coord = $cube->getCoords();
+        $coords = $cube->getCoords();
         return
-            $coord->getX() === 0 ||
-            $coord->getX() === self::N_ROWS -1 ||
-            $coord->getY() === 0 ||
-            $coord->getY() === self::N_COLS - 1;
+            $coords->getX() === 0 ||
+            $coords->getX() === self::N_ROWS -1 ||
+            $coords->getY() === 0 ||
+            $coords->getY() === self::N_COLS - 1;
     }
 
     /**
