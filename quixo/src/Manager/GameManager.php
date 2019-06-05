@@ -36,6 +36,36 @@ class GameManager
     }
 
     /**
+     * Fetch game from DB by id
+     *
+     * @param  int $id
+     *
+     * @return Game
+     */
+    public function getGame(int $id): Game
+    {
+        return $this->gameRepository->findOneBy(['id' => $id]);
+    }
+
+    /**
+     * Play a cube and save the game
+     *
+     * @param  Game   $game
+     * @param  Coords $coords
+     * @param  int    $team
+     *
+     * @return Game
+     */
+    public function playCube(Game $game, Coords $coords, int $team): Game
+    {
+        $newBoard = $this->moveCube($game, $coords, $team);
+        $game->setBoard($newBoard);
+        $this->gameRepository->save($game);
+
+        return $game;
+    }
+
+    /**
      * Get an empty board of n_rows and n_cols
      *
      * @param  int $n_rows

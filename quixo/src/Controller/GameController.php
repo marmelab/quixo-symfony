@@ -35,9 +35,9 @@ class GameController extends Controller
      *
      * @return Response
      */
-    public function game(Request $request, int $id, \Twig_Environment $twig, GameRepository $gameRepository, GameManager $gameManager): Response
+    public function game(Request $request, int $id, \Twig_Environment $twig, GameManager $gameManager): Response
     {
-        $game = $gameRepository->findOneBy(['id' => $id]);
+        $game = $gameManager->getGame($id);
         $submittedToken = $request->request->get('token');
 
         if ($this->isCsrfTokenValid('move-cube', $submittedToken)) {
@@ -45,9 +45,7 @@ class GameController extends Controller
                 $request->request->get('x'),
                 $request->request->get('y')
             );
-            $board = $gameManager->moveCube($game, $coordsSelected, GameManager::CROSS_TEAM);
-            $game->setBoard($board);
-            $gameRepository->save($game);
+            $game = $gameManager->playCube($game, $coordsSelected, GameManager::CROSS_TEAM);
         }
 
         $movables = $gameManager->getMovables($game, GameManager::CROSS_TEAM);
