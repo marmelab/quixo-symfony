@@ -5,7 +5,7 @@ namespace App\Twig;
 
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
-use App\Utils\GameUtils;
+use App\Manager\GameManager;
 
 class AppExtension extends AbstractExtension
 {
@@ -31,10 +31,10 @@ class AppExtension extends AbstractExtension
      */
     public function getCubeSymbol(int $value): string
     {
-        if ($value === GameUtils::CIRCLE_TEAM) {
+        if ($value === GameManager::CIRCLE_TEAM) {
             return 'circle';
         }
-        if ($value === GameUtils::CROSS_TEAM) {
+        if ($value === GameManager::CROSS_TEAM) {
             return 'cross';
         }
         return 'neutral';

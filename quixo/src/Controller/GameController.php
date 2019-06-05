@@ -7,9 +7,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use App\Entity\Game;
 use App\Repository\GameRepository;
-use App\Utils\GameUtils;
-use App\Form\BoardType;
 use App\Entity\Coords;
+use App\Manager\GameManager;
 
 class GameController extends Controller
 {
@@ -21,9 +20,9 @@ class GameController extends Controller
      *
      * @return Response
      */
-    public function newGame(GameRepository $gameRepository): Response
+    public function newGame(GameRepository $gameRepository, GameManager $gameManager): Response
     {
-        $board = GameUtils::getEmptyBoard();
+        $board =$gameManager->getEmptyBoard();
         $game = new Game($board);
         $gameRepository->save($game);
 
@@ -39,7 +38,7 @@ class GameController extends Controller
      *
      * @return Response
      */
-    public function game(Request $request, int $id, \Twig_Environment $twig, GameRepository $gameRepository): Response
+    public function game(Request $request, int $id, \Twig_Environment $twig, GameRepository $gameRepository, GameManager $gameManager): Response
     {
         $game = $gameRepository->findOneBy(['id' => $id]);
         $submittedToken = $request->request->get('token');
@@ -49,12 +48,12 @@ class GameController extends Controller
                 $request->request->get('x'),
                 $request->request->get('y')
             );
-            $board = GameUtils::moveCube($game->getBoard(), $coordsSelected, GameUtils::CROSS_TEAM);
+            $board = $gameManager->moveCube($game->getBoard(), $coordsSelected, GameManager::CROSS_TEAM);
             $game->setBoard($board);
             $gameRepository->save($game);
         }
 
-        $movables = GameUtils::getMovables($game->getBoard(), GameUtils::CROSS_TEAM);
+        $movables = $gameManager->getMovables($game->getBoard(), GameManager::CROSS_TEAM);
 
         return new Response($twig->render('game.html.twig', [
             'game' => $game,
