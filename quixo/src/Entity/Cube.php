@@ -3,69 +3,24 @@
 namespace App\Entity;
 
 use App\Utils\GameUtils;
+use App\Entity\Coords;
 
 class Cube
 {
-    private $coord;
+    private $coords;
 
     private $value;
 
-    private $movable;
-
-    private $selected;
-
-    public function __construct(array $coord, $value=GameUtils::NEUTRAL_VALUE, $movable=false, $selected=false)
+    public function __construct(Coords $coords, $value=GameUtils::NEUTRAL_VALUE)
     {
-        $this->coord = $coord;
+        $this->coords = $coords;
         $this->value = $value;
-        $this->movable = $movable;
-        $this->selected = $selected;
-    }
-
-    /**
-     * Get the value of selected
-     */
-    public function getSelected()
-    {
-        return $this->selected;
-    }
-
-    /**
-     * Set the value of selected
-     *
-     * @return  self
-     */
-    public function setSelected($selected)
-    {
-        $this->selected = $selected;
-
-        return $this;
-    }
-
-    /**
-     * Get the value of movable
-     */
-    public function getMovable()
-    {
-        return $this->movable;
-    }
-
-    /**
-     * Set the value of movable
-     *
-     * @return  self
-     */
-    public function setMovable($movable)
-    {
-        $this->movable = $movable;
-
-        return $this;
     }
 
     /**
      * Get the value of value
      */
-    public function getValue()
+    public function getValue(): int
     {
         return $this->value;
     }
@@ -75,7 +30,7 @@ class Cube
      *
      * @return  self
      */
-    public function setValue($value)
+    public function setValue(int $value): Cube
     {
         $this->value = $value;
 
@@ -85,7 +40,7 @@ class Cube
     /**
      * Get the value of coord
      */
-    public function getCoord()
+    public function getCoord(): Coords
     {
         return $this->coord;
     }
@@ -95,7 +50,7 @@ class Cube
      *
      * @return  self
      */
-    public function setCoord($coord)
+    public function setCoord(Coords $coord): Cube
     {
         $this->coord = $coord;
 

@@ -27,11 +27,20 @@ class GameController extends Controller
         return $this->redirectToRoute('game', ['id' => $game->getId()]);
     }
 
+    /**
+     * Display the game
+     *
+     * @param  int   $id The id of the game
+     * @param  mixed $twig
+     * @param  mixed $gameRepository
+     *
+     * @return Response
+     */
     public function game(int $id, \Twig_Environment $twig, GameRepository $gameRepository): Response
     {
-        dump($id);
         $game = $gameRepository->findOneBy(['id' => $id]);
-        dump($game);
-        return new Response($twig->render('main.html.twig', [ 'game' => $game ]));
+        $movables = GameUtils::getMovables($game);
+
+        return new Response($twig->render('game.html.twig', [ 'game' => $game, 'movables' => $movables ]));
     }
 }

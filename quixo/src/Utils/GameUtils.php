@@ -3,6 +3,7 @@
 namespace App\Utils;
 
 use App\Entity\Cube;
+use App\Entity\Coords;
 
 class GameUtils
 {
@@ -33,26 +34,28 @@ class GameUtils
     }
 
     /**
-     * Get the board with Cubes object. Cube store his own coords and if it is movables
+     * Return an array of movables cubes
      *
      * @param  array $board
+     * @param  int   $team
      *
      * @return array
      */
-    public static function getBoardWithFormatedCubes(array $board): array
+    public static function getMovables(array $board, int $team=self::NEUTRAL_VALUE): array
     {
-        $boardWithCubes = [];
+        $movables = [];
         for ($x=0; $x < count($board); $x++) {
             for ($y=0; $y < count(board[$x]); $y++) {
-                $value = $board[$x][$y];
-                $coord = ['x' => $x, 'y' => $y];
-                $cube = new Cube($coord, $value);
-                $cube->setMovable(self::isMovableCube($cube, NEUTRAL_VALUE));
-                $boardWithCubes[$x][$y] = new Cube($coord, $value);
+                $coords = new Coords($x, $y);
+                $cube = new Cube($coords, $board[x][y]);
+                if (self::isMovableCube($cube, $team)) {
+                    $movables[] = $cube;
+                }
             }
         }
-        return $boardWithCubes;
+        return $movables;
     }
+
 
     /**
      * return true if the cube is on the edge of the board
