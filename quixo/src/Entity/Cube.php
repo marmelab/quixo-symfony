@@ -2,8 +2,8 @@
 
 namespace App\Entity;
 
-use App\Utils\GameUtils;
 use App\Entity\Coords;
+use App\Manager\GameManager;
 
 class Cube
 {
@@ -11,7 +11,7 @@ class Cube
 
     private $value;
 
-    public function __construct(Coords $coords, $value=GameUtils::NEUTRAL_VALUE)
+    public function __construct(Coords $coords, $value = GameManager::NEUTRAL_VALUE)
     {
         $this->coords = $coords;
         $this->value = $value;

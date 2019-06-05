@@ -34,7 +34,7 @@ class Game
      *
      * @return void
      */
-    public function __construct($rows=5, $cols=5)
+    public function __construct($rows = 5, $cols = 5)
     {
         $this->rows = $rows;
         $this->cols = $cols;
