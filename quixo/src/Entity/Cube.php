@@ -40,9 +40,9 @@ class Cube
     /**
      * Get the value of coord
      */
-    public function getCoord(): Coords
+    public function getCoords(): Coords
     {
-        return $this->coord;
+        return $this->coords;
     }
 
     /**
@@ -50,9 +50,9 @@ class Cube
      *
      * @return  self
      */
-    public function setCoord(Coords $coord): Cube
+    public function setCoord(Coords $coords): Cube
     {
-        $this->coord = $coord;
+        $this->coords = $coords;
 
         return $this;
     }

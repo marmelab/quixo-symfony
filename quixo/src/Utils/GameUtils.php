@@ -45,9 +45,9 @@ class GameUtils
     {
         $movables = [];
         for ($x=0; $x < count($board); $x++) {
-            for ($y=0; $y < count(board[$x]); $y++) {
+            for ($y=0; $y < count($board[$x]); $y++) {
                 $coords = new Coords($x, $y);
-                $cube = new Cube($coords, $board[x][y]);
+                $cube = new Cube($coords, $board[$x][$y]);
                 if (self::isMovableCube($cube, $team)) {
                     $movables[] = $cube;
                 }
@@ -66,12 +66,12 @@ class GameUtils
      */
     public static function isOutsideCube(Cube $cube): bool
     {
-        $coord = $cube->getCoord();
+        $coord = $cube->getCoords();
         return
-            $coord['x'] === 0 ||
-            $coord['x'] === self::N_ROWS -1 ||
-            $coord['y'] === 0 ||
-            $coord['y'] === self::N_COLS - 1;
+            $coord->getX() === 0 ||
+            $coord->getX() === self::N_ROWS -1 ||
+            $coord->getY() === 0 ||
+            $coord->getY() === self::N_COLS - 1;
     }
 
     /**
@@ -85,6 +85,6 @@ class GameUtils
     public static function isMovableCube(Cube $cube, int $team): bool
     {
         $isAllowedCube = $cube->getValue() === 0 or $cube->getValue() === $team;
-        return self::isOutsideCube($cube) && isAllowedCube;
+        return self::isOutsideCube($cube) && $isAllowedCube;
     }
 }

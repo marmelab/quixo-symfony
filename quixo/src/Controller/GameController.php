@@ -39,7 +39,7 @@ class GameController extends Controller
     public function game(int $id, \Twig_Environment $twig, GameRepository $gameRepository): Response
     {
         $game = $gameRepository->findOneBy(['id' => $id]);
-        $movables = GameUtils::getMovables($game);
+        $movables = GameUtils::getMovables($game->getBoard());
 
         return new Response($twig->render('game.html.twig', [ 'game' => $game, 'movables' => $movables ]));
     }
