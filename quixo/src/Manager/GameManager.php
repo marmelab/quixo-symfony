@@ -119,10 +119,10 @@ class GameManager
     public function isOutsideCube(Game $game, Coords $coords): bool
     {
         return
-            $coords->x === 0 ||
-            $coords->x === $game->getRows() -1 ||
-            $coords->y === 0 ||
-            $coords->y === $game->getCols() - 1;
+            $coords->getX() === 0 ||
+            $coords->getX() === $game->getRows() -1 ||
+            $coords->getY() === 0 ||
+            $coords->getY() === $game->getCols() - 1;
     }
 
     /**
@@ -153,19 +153,19 @@ class GameManager
     {
         $board = $game->getBoard();
         $coordsEnd = $this->getOppositeCube($game, $coords);
-        if ($coords->x === $coordsEnd->x) {
+        if ($coords->getX() === $coordsEnd->getX()) {
             $board = $this->shiftRow($board, $value, [
-                'rowIndex' => $coords->x,
-                'xStart' => $coords->y,
-                'xEnd' => $coordsEnd->y,
+                'rowIndex' => $coords->getX(),
+                'xStart' => $coords->getY(),
+                'xEnd' => $coordsEnd->getY(),
             ]);
         }
-        elseif ($coords->y === $coordsEnd->y) {
+        elseif ($coords->getY() === $coordsEnd->getY()) {
             $flippedBoard = $this->flipRowCol($board);
             $flippedBoard = $this->shiftRow($flippedBoard, $value, [
-                'rowIndex' => $coords->y,
-                'xStart' => $coords->x,
-                'xEnd' => $coordsEnd->x,
+                'rowIndex' => $coords->getY(),
+                'xStart' => $coords->getX(),
+                'xEnd' => $coordsEnd->getX(),
             ]);
             $board = $this->flipRowCol($flippedBoard);
         }
@@ -209,8 +209,8 @@ class GameManager
      */
     public function getOppositeCube(Game $game, Coords $coords): Coords
     {
-        $x = $coords->x;
-        $y = $coords->y;
+        $x = $coords->getX();
+        $y = $coords->getY();
 
         $xEnd = $x;
         $yEnd = $y;

@@ -4,9 +4,9 @@ namespace App\Entity;
 
 class Coords
 {
-    public $x;
+    private $x;
 
-    public $y;
+    private $y;
 
     public function __construct(int $x, int $y)
     {
