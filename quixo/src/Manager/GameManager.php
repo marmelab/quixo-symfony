@@ -44,7 +44,7 @@ class GameManager
      */
     public function getGame(int $id): Game
     {
-        return $this->gameRepository->findOneBy(['id' => $id]);
+        return $this->gameRepository->find($id);
     }
 
     /**
