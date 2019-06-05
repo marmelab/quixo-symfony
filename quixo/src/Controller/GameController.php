@@ -42,8 +42,8 @@ class GameController extends Controller
 
         if ($this->isCsrfTokenValid('move-cube', $submittedToken)) {
             $coordsSelected = new Coords(
-                $request->request->get('x'),
-                $request->request->get('y')
+                $request->request->getInt('x'),
+                $request->request->getInt('y')
             );
             $game = $gameManager->playCube($game, $coordsSelected, GameManager::CROSS_TEAM);
         }
