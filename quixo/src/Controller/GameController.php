@@ -9,6 +9,7 @@ use App\Entity\Game;
 use App\Repository\GameRepository;
 use App\Utils\GameUtils;
 use App\Form\BoardType;
+use App\Entity\Coords;
 
 class GameController extends Controller
 {
@@ -41,13 +42,20 @@ class GameController extends Controller
     public function game(Request $request, int $id, \Twig_Environment $twig, GameRepository $gameRepository): Response
     {
         $game = $gameRepository->findOneBy(['id' => $id]);
-        $movables = GameUtils::getMovables($game->getBoard());
         $submittedToken = $request->request->get('token');
 
         if ($this->isCsrfTokenValid('move-cube', $submittedToken)) {
-            $x = $request->request->get('x');
-            $y = $request->request->get('y');
+            $coordsSelected = new Coords(
+                $request->request->get('x'),
+                $request->request->get('y')
+            );
+            $board = GameUtils::moveCube($game->getBoard(), $coordsSelected, GameUtils::CROSS_TEAM);
+            $game->setBoard($board);
+            $gameRepository->save($game);
         }
+
+        $movables = GameUtils::getMovables($game->getBoard(), GameUtils::CROSS_TEAM);
+
         return new Response($twig->render('game.html.twig', [
             'game' => $game,
             'movables' => $movables,

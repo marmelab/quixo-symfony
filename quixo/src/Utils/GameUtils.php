@@ -60,18 +60,17 @@ class GameUtils
     /**
      * return true if the cube is on the edge of the board
      *
-     * @param  Cube $cube
+     * @param  Coords $coords
      *
      * @return bool
      */
-    public static function isOutsideCube(Cube $cube): bool
+    public static function isOutsideCube(Coords $coords): bool
     {
-        $coords = $cube->getCoords();
         return
-            $coords->getX() === 0 ||
-            $coords->getX() === self::N_ROWS -1 ||
-            $coords->getY() === 0 ||
-            $coords->getY() === self::N_COLS - 1;
+            $coords->x === 0 ||
+            $coords->x === self::N_ROWS -1 ||
+            $coords->y === 0 ||
+            $coords->y === self::N_COLS - 1;
     }
 
     /**
@@ -84,7 +83,80 @@ class GameUtils
      */
     public static function isMovableCube(Cube $cube, int $team): bool
     {
-        $isAllowedCube = $cube->getValue() === 0 or $cube->getValue() === $team;
-        return self::isOutsideCube($cube) && $isAllowedCube;
+        $isAllowedCube = $cube->getValue() === 0 || $cube->getValue() === $team;
+        return self::isOutsideCube($cube->getCoords()) && $isAllowedCube;
+    }
+
+
+    public static function moveCube(array $board, Coords $coords, int $value)
+    {
+        $coordsEnd = self::getOppositeCube($coords);
+        if ($coords->x === $coordsEnd->x) {
+            $board = self::moveRow($board, $value, [
+                'rowIndex' => $coords->x,
+                'xStart' => $coords->y,
+                'xEnd' => $coordsEnd->y,
+            ]);
+        }
+        elseif ($coords->y === $coordsEnd->y) {
+            $flippedBoard = self::flip_row_col_array($board);
+            $flippedBoard = self::moveRow($flippedBoard, $value, [
+                'rowIndex' => $coords->y,
+                'xStart' => $coords->x,
+                'xEnd' => $coordsEnd->x,
+            ]);
+            $board = self::flip_row_col_array($flippedBoard);
+        }
+        return $board;
+    }
+
+
+    public static function moveRow(array $board, int $value, array $coords): array
+    {
+        $rowIndex = $coords['rowIndex'];
+        $xStart = $coords['xStart'];
+        $xEnd = $coords['xEnd'];
+
+        $step = $xEnd > $xStart ? -1 : 1;
+        $indexStop = $xEnd > $xStart ? $xStart - 1 : $xStart + 1;
+        for ($i = $xEnd; $i !== $indexStop; $i += $step) {
+            $tmpVal = $board[$rowIndex][$i];
+            $board[$rowIndex][$i] = $value;
+            $value = $tmpVal;
+        }
+        return $board;
+    }
+
+    public static function getOppositeCube(Coords $coords)
+    {
+        $x = $coords->x;
+        $y = $coords->y;
+
+        $xEnd = $x;
+        $yEnd = $y;
+
+        if ($x === 0) {
+            $xEnd = self::N_ROWS - 1;
+        }
+        if ($x === self::N_ROWS - 1) {
+            $xEnd = 0;
+        }
+        if ($y === 0) {
+            $yEnd = self::N_COLS - 1;
+        }
+        if ($y === self::N_COLS - 1) {
+            $yEnd = 0;
+        }
+        return new Coords($xEnd, $yEnd);
+    }
+
+    public static function flip_row_col_array(array $array): array {
+        $out = array();
+        foreach ($array as  $rowkey => $row) {
+            foreach($row as $colkey => $col){
+                $out[$colkey][$rowkey]=$col;
+            }
+        }
+        return $out;
     }
 }
