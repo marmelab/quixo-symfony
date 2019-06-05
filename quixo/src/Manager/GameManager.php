@@ -185,8 +185,6 @@ class GameManager
         $xEnd = $x;
         $yEnd = $y;
 
-        dump($game->getRows());
-        dump($game->getCols());
         if ($x === 0) {
             $xEnd = $game->getRows() - 1;
         }
