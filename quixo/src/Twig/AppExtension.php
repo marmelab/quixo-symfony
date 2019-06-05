@@ -40,7 +40,16 @@ class AppExtension extends AbstractExtension
         return 'neutral';
     }
 
-    public function isCubeInMovables(array $movables, int $x, int $y)
+    /**
+     * Check if cube is in movables array
+     *
+     * @param  array $movables
+     * @param  int   $x
+     * @param  int   $y
+     *
+     * @return bool
+     */
+    public function isCubeInMovables(array $movables, int $x, int $y): bool
     {
         foreach ($movables as $cube) {
             $coords = $cube->getCoords();
