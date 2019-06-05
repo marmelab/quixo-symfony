@@ -21,6 +21,12 @@ class Game
     /** @ORM\Column(type="json") */
     private $board;
 
+    /** @ORM\Column(type="integer") */
+    private $rows;
+
+    /** @ORM\Column(type="integer") */
+    private $cols;
+
     /**
      * __construct
      *
@@ -28,9 +34,10 @@ class Game
      *
      * @return void
      */
-    public function __construct(array $board)
+    public function __construct($rows = 5, $cols = 5)
     {
-        $this->board = $board;
+        $this->rows = $rows;
+        $this->cols = $cols;
     }
 
     /**
@@ -76,6 +83,46 @@ class Game
     public function setBoard(array $board): Game
     {
         $this->board = $board;
+        return $this;
+    }
+
+    /**
+     * Get the value of rows
+     */
+    public function getRows()
+    {
+        return $this->rows;
+    }
+
+    /**
+     * Set the value of rows
+     *
+     * @return  self
+     */
+    public function setRows($rows)
+    {
+        $this->rows = $rows;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of cols
+     */
+    public function getCols()
+    {
+        return $this->cols;
+    }
+
+    /**
+     * Set the value of cols
+     *
+     * @return  self
+     */
+    public function setCols($cols)
+    {
+        $this->cols = $cols;
+
         return $this;
     }
 }
