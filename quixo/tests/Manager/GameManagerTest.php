@@ -130,4 +130,82 @@ class GameUtilsTest extends TestCase
         $board = $manager->moveCube($game, $cubeStart, 1);
         $this->assertEquals($board, $expectedBoard);
     }
+
+    public function testNoWinner(): void
+    {
+        $gameRepository = $this->createMock(GameRepository::class);
+        $manager = new GameManager($gameRepository);
+        $game = new Game();
+        $noWinBoard = [
+            [0, 1, 1, 1, 1],
+            [1, 1, 0, 1, 1],
+            [1, 0, 1, 1, 1],
+            [0, 1, 0, 1, 0],
+            [0, 1, 1, 0, 0]
+        ];
+        $game->setBoard($noWinBoard);
+        $winningCubes = $manager->resolveWinner($game);
+
+        $this->assertEquals(null, $game->getWinner());
+        $this->assertEquals(count($winningCubes), 0);
+    }
+
+    public function testWinner(): void
+    {
+        $gameRepository = $this->createMock(GameRepository::class);
+        $manager = new GameManager($gameRepository);
+        $game = new Game();
+        $winBoard = [
+            [0, 0, 0, 0, 0],
+            [1, 1, 1, 1, 1],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0]
+        ];
+        $game->setBoard($winBoard);
+        $winningCubes = $manager->resolveWinner($game);
+
+        $this->assertEquals(1, $game->getWinner());
+        $this->assertEquals(count($winningCubes), 5);
+    }
+
+    public function testDrawWin(): void
+    {
+        $gameRepository = $this->createMock(GameRepository::class);
+        $manager = new GameManager($gameRepository);
+        $game = new Game();
+        $player = 1;
+        $winningPlayer = -1;
+        $winBoard = [
+            [0, 0, 0, 0, 0],
+            [$player, $player, $player, $player, $player],
+            [$winningPlayer, $winningPlayer, $winningPlayer, $winningPlayer, $winningPlayer],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0]
+        ];
+        $game->setBoard($winBoard);
+        $winningCubes = $manager->resolveWinner($game);
+
+        $this->assertEquals($winningPlayer, $game->getWinner());
+        $this->assertEquals(count($winningCubes), 5);
+    }
+
+    public function testDiagWin(): void
+    {
+        $gameRepository = $this->createMock(GameRepository::class);
+        $manager = new GameManager($gameRepository);
+        $game = new Game();
+        $winBoard = [
+            [1, 0, 0, 0, 0],
+            [0, 1, 0, 0, 0],
+            [0, 0, 1, 0, 0],
+            [0, 0, 0, 1, 0],
+            [0, 0, 0, 0, 1]
+        ];
+        $game->setBoard($winBoard);
+        $winningCubes = $manager->resolveWinner($game);
+
+        $this->assertEquals(1, $game->getWinner());
+        $this->assertEquals(count($winningCubes), 5);
+    }
 }
