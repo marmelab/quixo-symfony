@@ -47,7 +47,7 @@ class GameController extends AbstractController
             $game = $gameManager->playCube($game, $coordsSelected, GameManager::CROSS_TEAM);
         }
 
-        list($winner, $winningCubes) = $gameManager->getWinnerAndWinningCubes($game);
+        list($winner, $winningCubes) = $gameManager->resolveWinnerAndWinningCubes($game);
         if ($winner !== $game->getWinner()) {
             $gameManager->persistWinner($game, $winner);
         }

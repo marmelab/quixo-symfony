@@ -254,7 +254,7 @@ class GameManager
      *
      * @return array with winner and an array of the winningCubes
      */
-    public function getWinnerAndWinningCubes(Game $game): array
+    public function resolveWinnerAndWinningCubes(Game $game): array
     {
         $currentPlayer = $game->getCurrentPlayer();
         $winningLines = $this->getWinningLines($game);
