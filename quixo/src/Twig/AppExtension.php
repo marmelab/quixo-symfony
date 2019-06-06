@@ -19,6 +19,7 @@ class AppExtension extends AbstractExtension
         return [
             new TwigFilter('getCubeSymbol', [$this, 'getCubeSymbol']),
             new TwigFilter('isCoordsInCubeArray', [$this, 'isCoordsInCubeArray']),
+            new TwigFilter('getPlayerName', [$this, 'getPlayerName']),
         ];
     }
 
@@ -58,5 +59,17 @@ class AppExtension extends AbstractExtension
             }
         }
         return false;
+    }
+
+    /**
+     * Return the player name
+     *
+     * @param  int $value
+     *
+     * @return string
+     */
+    public function getPlayerName($value): string
+    {
+        return $value === 1 ? '1' : '2';
     }
 }

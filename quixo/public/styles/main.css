@@ -44,3 +44,16 @@
 .winning-cube {
     background: green;
 }
+
+.header {
+    padding: 10px 10px;
+}
+
+.winner {
+    font-size: 3em;
+    text-align: center;
+}
+
+.action-buttons {
+    position: fixed;
+}
