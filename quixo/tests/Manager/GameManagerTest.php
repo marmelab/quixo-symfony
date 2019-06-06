@@ -11,7 +11,7 @@ class GameUtilsTest extends TestCase
 {
 
     /**
-     * Test that game utils return an empty board with the good numbers of rows & cols
+     * Test that game manager return an empty board with the good numbers of rows & cols
      *
      * @return void
      */
@@ -27,6 +27,11 @@ class GameUtilsTest extends TestCase
         $this->assertEquals(count($emptyRectBoard[0]), $n_cols);
     }
 
+    /**
+     * Test that game manager return a correct list of movables cubes
+     *
+     * @return void
+     */
     public function testGetMovables(): void
     {
         $gameRepository = $this->createMock(GameRepository::class);
@@ -55,6 +60,11 @@ class GameUtilsTest extends TestCase
         $this->assertEquals(count($expected_movables), $found, count($movables));
     }
 
+    /**
+     * Test that shift row add the correct value to the cube
+     *
+     * @return void
+     */
     public function testShiftRow(): void
     {
         $gameRepository = $this->createMock(GameRepository::class);
@@ -70,6 +80,11 @@ class GameUtilsTest extends TestCase
         $this->assertEquals($expectedRow, $row);
     }
 
+    /**
+     * Test that shift row use the existing cube
+     *
+     * @return void
+     */
     public function testShiftRowWithExistingCube(): void
     {
         $gameRepository = $this->createMock(GameRepository::class);
@@ -85,6 +100,11 @@ class GameUtilsTest extends TestCase
         $this->assertEquals($expectedRow, $row);
     }
 
+    /**
+     * Check the moveCube move the cube and shift the line
+     *
+     * @return void
+     */
     public function testMoveCube(): void
     {
         $gameRepository = $this->createMock(GameRepository::class);
