@@ -1,5 +1,10 @@
-<div class="cube cube-{{cube|getCubeSymbol}}">
-    {% if movables|isCubeInMovables(x, y) %}
+{% set isWinningCube = winningCubes|isCoordsInCubeArray(x, y) %}
+{% set className = 'cube cube-' ~ cube|getCubeSymbol %}
+{% if isWinningCube %}
+    {% set className = className ~ ' winning-cube' %}
+{% endif %}
+<div class="{{className}}">
+    {% if movables|isCoordsInCubeArray(x, y) %}
         <form
             class="form-cube"
             action="{{ url('game', { id: game.id }) }}"

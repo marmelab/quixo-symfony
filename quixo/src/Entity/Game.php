@@ -34,9 +34,6 @@ class Game
     /** @ORM\Column(type="integer") */
     private $currentPlayer;
 
-    /** @ORM\Column(type="json", nullable=true) */
-    private $winningLine;
-
     /**
      * __construct
      *
@@ -166,7 +163,7 @@ class Game
      *
      * @return int
      */
-    public function getWinner(): int
+    public function getWinner(): ?int
     {
         return $this->winner;
     }

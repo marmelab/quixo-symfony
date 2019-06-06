@@ -248,34 +248,31 @@ class GameManager
     }
 
     /**
-     * Check if there is a winner, update Game
+     * Get winning cubes
      *
      * @param  Game $game
      *
-     * @return Game
+     * @return array of Cube
      */
-    public function checkWinner(Game $game): Game
+    public function getWinningCubes(Game $game): array
     {
-        $board = $game->getBoard();
-        $currentPlayer = $game->getNextPlayer();
+        $currentPlayer = $game->getCurrentPlayer();
         $winningLines = $this->getWinningLines($game);
         $winner = null;
-        $winCubes = null;
+        $winCubes = [];
         foreach ($winningLines as $line) {
             $cube = $line[0];
-            $winningPlayer = $board[$cube['x']][$cube['y']];
-            $winner = $winningPlayer;
+            $winner = $cube->getValue();
             $winCubes = $line;
             if ($winner !== $currentPlayer) {
                 break;
             }
         }
-        if (winner !== null && $winCubes !== null) {
+        if ($winner !== null && $winCubes !== null) {
             $game->setWinner($winner);
-            $game->setWinningLine($winCubes);
             $this->gameRepository->save($game);
         }
-        return $game;
+        return $winCubes;
     }
 
     /**
@@ -288,8 +285,8 @@ class GameManager
     public function getWinningLines(Game $game): array
     {
         $lines = [];
-        $lines[] = $this->getDiagWinner($game);
-        $lines[] = $this->getDiagWinner($game, true);
+        $lines[] = $this->getDiagWinningLine($game);
+        $lines[] = $this->getDiagWinningLine($game, true);
         foreach ($this->getRowsWinner($game) as $row) {
             $lines[] = $row;
         }
@@ -325,10 +322,7 @@ class GameManager
                 $prevValue = $value;
             }
             if ($value === $prevValue && $value !== GameManager::NEUTRAL_VALUE) {
-                $winCubes[] = [
-                    'x' => $x,
-                    'y' => $y,
-                ];
+                $winCubes[] = new Cube(new Coords($x, $y), $value);
             } else {
                 return [];
             }
@@ -357,12 +351,13 @@ class GameManager
                     $prevValue = $value;
                 }
                 if ($value === $prevValue && $value !== GameManager::NEUTRAL_VALUE) {
-                    $row[] = $inverted ? ['x' => $y, 'y' => $x] : ['x' => $x, 'y' => $y];
+                    $coords = $inverted ? new Coords($y, $x) : new Coords($x, $y);
+                    $row[] = new Cube($coords, $value);
                 } else {
                     break;
                 }
             }
-            if (count($row) === count($board($x))) {
+            if (count($row) === count($board[$x])) {
                 $winningRows[] = $row;
             }
         }
