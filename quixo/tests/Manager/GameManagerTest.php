@@ -48,8 +48,7 @@ class GameUtilsTest extends TestCase
         $found = 0;
         $movables = $manager->getMovables($game);
 
-        foreach ($movables as $cube) {
-            $coords = $cube->getCoords();
+        foreach ($movables as $coords) {
             foreach ($expected_movables as $expected) {
                 if ($coords->getX() == $expected['x'] && $coords->getY() == $expected['y']) {
                     $found++;
@@ -127,7 +126,8 @@ class GameUtilsTest extends TestCase
         $game->setBoard($initBoard);
 
         $cubeStart = new Coords(0, 1);
-        $board = $manager->moveCube($game, $cubeStart, 1);
+        $cubeEnd = new Coords(4, 1);
+        $board = $manager->moveCube($game, $cubeStart, $cubeEnd, 1);
         $this->assertEquals($board, $expectedBoard);
     }
 
