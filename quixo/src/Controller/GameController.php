@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 use App\Repository\GameRepository;
 use App\Entity\Coords;
 use App\Manager\GameManager;
+use App\Manager\SessionManager;
 
 class GameController extends AbstractController
 {
@@ -22,24 +23,44 @@ class GameController extends AbstractController
     {
         $game = $gameManager->createGame();
 
-        return $this->redirectToRoute('game', ['id' => $game->getId()]);
+        return $this->redirectToRoute('assign-player', ['id' => $game->getId()]);
+    }
+
+    public function assignPlayer(Request $request, GameManager $gameManager, SessionManager $sessionManager): Response
+    {
+        $id = $request->attributes->getInt('id');
+        $game = $gameManager->getGame($id);
+        $numberOfPlayers = $game->getNumberOfPlayers();
+        if ($numberOfPlayers === 0) {
+            $sessionManager->storePlayerTeam($game, GameManager::CROSS_TEAM);
+        } elseif ($numberOfPlayers === 1) {
+            $sessionManager->storePlayerTeam($game, GameManager::CIRCLE_TEAM);
+        } else {
+            return $this->redirectToRoute('newgame', ['id' => $id]);
+        }
+        return $this->redirectToRoute('game', ['id' => $id]);
     }
 
     /**
-     * Display the game
+     * Display the game for players
      *
-     * @param  int   $id The id of the game
-     * @param  mixed $twig
-     * @param  mixed $gameRepository
+     * @param  Twig_Environment $twig
+     * @param  GameManager      $gameManager
+     * @param  CookieManager    $cookieManager
      *
      * @return Response
      */
-    public function game(Request $request, int $id, \Twig_Environment $twig, GameManager $gameManager): Response
+    public function game(Request $request, \Twig_Environment $twig, GameManager $gameManager, SessionManager $sessionManager): Response
     {
-        $game = $gameManager->getGame($id);
-        $submittedToken = $request->request->get('token');
+        $game = $gameManager->getGame($request->attributes->getInt('id'));
+        $playerTeam = $sessionManager->getPlayerTeam($game);
 
-        if ($this->isCsrfTokenValid('move-cube', $submittedToken)) {
+        if ($playerTeam !== GameManager::CIRCLE_TEAM && $playerTeam !== $gameManager::CROSS_TEAM) {
+            return $this->redirectToRoute('assign-player', ['id' => $game->getId()]);
+        }
+
+        $submittedToken = $request->request->get('token');
+        if ($this->isCsrfTokenValid('move-cube', $submittedToken) && $playerTeam === $game->getCurrentPlayer()) {
             $coordsSelected = new Coords(
                 $request->request->getInt('x'),
                 $request->request->getInt('y')
@@ -47,7 +68,8 @@ class GameController extends AbstractController
             if ($game->getSelectedCube() === null) {
                 $game = $gameManager->selectCube($game, $coordsSelected);
             } else {
-                $game = $gameManager->playCube($game, $coordsSelected, GameManager::CROSS_TEAM);
+                $game = $gameManager->playCube($game, $coordsSelected, $playerTeam);
+                $gameManager->switchPlayer($game);
             }
         }
 
@@ -56,14 +78,13 @@ class GameController extends AbstractController
             $gameManager->persistWinner($game, $winner);
         }
 
-        $movables = $game->getWinner() === null
-            ? $gameManager->getMovablesOrDestinations($game)
-            : [];
+        $movables = $gameManager->getMovablesForPlayer($game, $playerTeam);
 
-            return new Response($twig->render('game.html.twig', [
+        return new Response($twig->render('game.html.twig', [
             'game' => $game,
             'movables' => $movables,
             'winningCubes' => $winningCubes,
+            'isPlaying' => $playerTeam === $game->getCurrentPlayer(),
         ]));
     }
 }

@@ -11,3 +11,7 @@ newgame:
 game:
     path: /game/{id}
     controller: App\Controller\GameController::game
+
+assign-player:
+    path: /assign-player/{id}
+    controller: App\Controller\GameController::assignPlayer

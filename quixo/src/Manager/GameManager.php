@@ -489,4 +489,23 @@ class GameManager
             ? $this->getMovables($game, $game->getCurrentPlayer())
             : $this->getAllowedDestinations($game);
     }
+
+    public function getMovablesForPlayer(Game $game, int $player): array
+    {
+        if ($game->getWinner() !== null || $game->getCurrentPlayer() !== $player) {
+            return [];
+        }
+        return $this->getMovablesOrDestinations($game);
+    }
+
+    public function switchPlayer(Game $game): void
+    {
+        $currentPlayer = $game->getCurrentPlayer();
+        if ($currentPlayer === self::CIRCLE_TEAM) {
+            $game->setCurrentPlayer(self::CROSS_TEAM);
+        } else {
+            $game->setCurrentPlayer(self::CIRCLE_TEAM);
+        }
+        $this->gameRepository->save($game);
+    }
 }
