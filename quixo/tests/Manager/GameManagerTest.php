@@ -131,7 +131,12 @@ class GameUtilsTest extends TestCase
         $this->assertEquals($board, $expectedBoard);
     }
 
-    public function testNoWinner(): void
+    /**
+     * Test that no winner is returned when board has no winner
+     *
+     * @return void
+     */
+    public function testGameHasNoWinner(): void
     {
         $gameRepository = $this->createMock(GameRepository::class);
         $manager = new GameManager($gameRepository);
@@ -150,7 +155,12 @@ class GameUtilsTest extends TestCase
         $this->assertEquals(count($winningCubes), 0);
     }
 
-    public function testWinner(): void
+    /**
+     * Test that a winner and the cubes are returned when a winner exist
+     *
+     * @return void
+     */
+    public function testGameHasWinner(): void
     {
         $gameRepository = $this->createMock(GameRepository::class);
         $manager = new GameManager($gameRepository);
@@ -169,7 +179,12 @@ class GameUtilsTest extends TestCase
         $this->assertEquals(count($winningCubes), 5);
     }
 
-    public function testDrawWin(): void
+    /**
+     * Test that the winner is the non-playing player when draw
+     *
+     * @return void
+     */
+    public function testNoPlayingPlayerWinWhenDraw(): void
     {
         $gameRepository = $this->createMock(GameRepository::class);
         $manager = new GameManager($gameRepository);
@@ -190,7 +205,12 @@ class GameUtilsTest extends TestCase
         $this->assertEquals(count($winningCubes), 5);
     }
 
-    public function testDiagWin(): void
+    /**
+     * Test that a winner and the cubes are returned when a winner exist in a diag
+     *
+     * @return void
+     */
+    public function testGameHasWinInDiag(): void
     {
         $gameRepository = $this->createMock(GameRepository::class);
         $manager = new GameManager($gameRepository);
