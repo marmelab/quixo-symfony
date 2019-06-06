@@ -23,16 +23,16 @@ class GameManager
     /**
      * Create a new game and return id
      *
-     * @return int the id of the game
+     * @return Game
      */
-    public function createGame(): int
+    public function createGame(): Game
     {
         $game = new Game();
         $newBoard = $this->getEmptyBoard($game->getRows(), $game->getCols());
         $game->setBoard($newBoard);
         $this->gameRepository->save($game);
 
-        return $game->getId();
+        return $game;
     }
 
     /**
@@ -245,5 +245,132 @@ class GameManager
             }
         }
         return $out;
+    }
+
+    /**
+     * Get winning cubes
+     *
+     * @param  Game $game
+     *
+     * @return array with winner and an array of the winningCubes
+     */
+    public function resolveWinnerAndWinningCubes(Game $game): array
+    {
+        $currentPlayer = $game->getCurrentPlayer();
+        $winningLines = $this->getWinningLines($game);
+        $winner = null;
+        $winCubes = [];
+        foreach ($winningLines as $line) {
+            $cube = $line[0];
+            $winner = $cube->getValue();
+            $winCubes = $line;
+            if ($winner !== $currentPlayer) {
+                break;
+            }
+        }
+        return [$winner, $winCubes];
+    }
+
+    /**
+     * Get winning lines
+     *
+     * @param  Game $game
+     *
+     * @return array with all winning lines
+     */
+    public function getWinningLines(Game $game): array
+    {
+        $lines = [];
+        $lines[] = $this->getWinnerDiagonalLine($game);
+        $lines[] = $this->getWinnerDiagonalLine($game, true);
+        foreach ($this->getWinnerStraightLines($game) as $row) {
+            $lines[] = $row;
+        }
+        foreach ($this->getWinnerStraightLines($game, true) as $col) {
+            $lines[] = $col;
+        }
+        return array_filter($lines, function($line) {
+            return count($line) > 0;
+        });
+    }
+
+    /**
+     * Get the winning cube if exist
+     *
+     * @param  Game  $game
+     * @param  bool  $inverted
+     *
+     * @return array
+     */
+    public function getWinnerDiagonalLine(Game $game, bool $inverted = false): array
+    {
+        if ($game->getRows() !== $game->getCols()) {
+            return [];
+        }
+        $board = $game->getBoard();
+        $winCubes = [];
+        $prevValue = null;
+        for ($i = 0; $i < $game->getRows(); $i++) {
+            $x = $i;
+            $y = $inverted ? $game->getRows() - 1 - $i : $i;
+            $value = $board[$x][$y];
+            if ($prevValue === null) {
+                $prevValue = $value;
+            }
+            if ($value === $prevValue && $value !== GameManager::NEUTRAL_VALUE) {
+                $winCubes[] = new Cube(new Coords($x, $y), $value);
+            } else {
+                return [];
+            }
+        }
+        return $winCubes;
+    }
+
+    /**
+     * Get winning lines
+     *
+     * @param  Game $game
+     * @param  bool $inverted
+     *
+     * @return array
+     */
+    public function getWinnerStraightLines(Game $game, $inverted = false): array
+    {
+        $board = $inverted ? $this->flipRowCol($game->getBoard()) : $game->getBoard();
+        $winningRows = [];
+        for ($x = 0; $x < count($board); $x++) {
+            $row = [];
+            $prevValue = null;
+            for ($y = 0; $y < count($board[$x]); $y++) {
+                $value = $board[$x][$y];
+                if ($prevValue === null) {
+                    $prevValue = $value;
+                }
+                if ($value === $prevValue && $value !== GameManager::NEUTRAL_VALUE) {
+                    $coords = $inverted ? new Coords($y, $x) : new Coords($x, $y);
+                    $row[] = new Cube($coords, $value);
+                } else {
+                    break;
+                }
+            }
+            if (count($row) === count($board[$x])) {
+                $winningRows[] = $row;
+            }
+        }
+        return $winningRows;
+    }
+
+    /**
+     * Persist the winner
+     *
+     * @param  Game $game
+     * @param  int  $winner
+     *
+     * @return void
+     */
+    public function persistWinner(Game $game, int $winner): void
+    {
+        $game->setWinner($winner);
+        $this->gameRepository->save($game);
     }
 }

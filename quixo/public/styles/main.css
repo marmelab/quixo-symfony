@@ -39,4 +39,23 @@
     background: none;
     border-radius: 5%;
     border: solid 2px green;
+    outline: none;
+    padding: 0;
+}
+
+.winning-cube {
+    background: green;
+}
+
+.header {
+    padding: 10px 10px;
+}
+
+.winner {
+    font-size: 3em;
+    text-align: center;
+}
+
+.action-buttons {
+    position: fixed;
 }

@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use App\Manager\GameManager;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\GameRepository")
@@ -27,6 +28,12 @@ class Game
     /** @ORM\Column(type="integer") */
     private $cols;
 
+    /** @ORM\Column(type="integer", nullable=true) */
+    private $winner;
+
+    /** @ORM\Column(type="integer") */
+    private $currentPlayer;
+
     /**
      * __construct
      *
@@ -38,6 +45,7 @@ class Game
     {
         $this->rows = $rows;
         $this->cols = $cols;
+        $this->currentPlayer = GameManager::CROSS_TEAM;
     }
 
     /**
@@ -122,6 +130,74 @@ class Game
     public function setCols($cols)
     {
         $this->cols = $cols;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of currentPlayer
+     *
+     * @return int
+     */
+    public function getCurrentPlayer(): int
+    {
+        return $this->currentPlayer;
+    }
+
+    /**
+     * Set the value of currentPlayer
+     *
+     * @param  int $currentPlayer
+     *
+     * @return  self
+     */
+    public function setCurrentPlayer(int $currentPlayer): Game
+    {
+        $this->currentPlayer = $currentPlayer;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of winner
+     *
+     * @return int
+     */
+    public function getWinner(): ?int
+    {
+        return $this->winner;
+    }
+
+    /**
+     * Set the value of winner
+     *
+     * @param  int $winner
+     *
+     * @return self
+     */
+    public function setWinner(int $winner): Game
+    {
+        $this->winner = $winner;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of winningLine
+     */
+    public function getWinningLine()
+    {
+        return $this->winningLine;
+    }
+
+    /**
+     * Set the value of winningLine
+     *
+     * @return  self
+     */
+    public function setWinningLine($winningLine)
+    {
+        $this->winningLine = $winningLine;
 
         return $this;
     }

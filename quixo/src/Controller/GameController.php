@@ -20,9 +20,9 @@ class GameController extends AbstractController
      */
     public function newGame(GameManager $gameManager): Response
     {
-        $gameId = $gameManager->createGame();
+        $game = $gameManager->createGame();
 
-        return $this->redirectToRoute('game', ['id' => $gameId]);
+        return $this->redirectToRoute('game', ['id' => $game->getId()]);
     }
 
     /**
@@ -47,11 +47,19 @@ class GameController extends AbstractController
             $game = $gameManager->playCube($game, $coordsSelected, GameManager::CROSS_TEAM);
         }
 
-        $movables = $gameManager->getMovables($game, GameManager::CROSS_TEAM);
+        list($winner, $winningCubes) = $gameManager->resolveWinnerAndWinningCubes($game);
+        if ($winner !== $game->getWinner()) {
+            $gameManager->persistWinner($game, $winner);
+        }
+
+        $movables = $game->getWinner() === null
+            ? $gameManager->getMovables($game, GameManager::CROSS_TEAM)
+            : [];
 
         return new Response($twig->render('game.html.twig', [
             'game' => $game,
             'movables' => $movables,
+            'winningCubes' => $winningCubes,
         ]));
     }
 }

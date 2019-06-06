@@ -18,7 +18,8 @@ class AppExtension extends AbstractExtension
     {
         return [
             new TwigFilter('getCubeSymbol', [$this, 'getCubeSymbol']),
-            new TwigFilter('isCubeInMovables', [$this, 'isCubeInMovables']),
+            new TwigFilter('isCoordsInCubeArray', [$this, 'isCoordsInCubeArray']),
+            new TwigFilter('getPlayerName', [$this, 'getPlayerName']),
         ];
     }
 
@@ -49,7 +50,7 @@ class AppExtension extends AbstractExtension
      *
      * @return bool
      */
-    public function isCubeInMovables(array $movables, int $x, int $y): bool
+    public function isCoordsInCubeArray(array $movables, int $x, int $y): bool
     {
         foreach ($movables as $cube) {
             $coords = $cube->getCoords();
@@ -58,5 +59,17 @@ class AppExtension extends AbstractExtension
             }
         }
         return false;
+    }
+
+    /**
+     * Return the player name
+     *
+     * @param  int $value
+     *
+     * @return string
+     */
+    public function getPlayerName($value): string
+    {
+        return $value === 1 ? 'Player 1' : 'Player 2';
     }
 }
