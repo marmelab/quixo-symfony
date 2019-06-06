@@ -254,7 +254,7 @@ class GameManager
      *
      * @return array of Cube
      */
-    public function getWinningCubes(Game $game): array
+    public function resolveWinner(Game $game): array
     {
         $currentPlayer = $game->getCurrentPlayer();
         $winningLines = $this->getWinningLines($game);
@@ -285,16 +285,16 @@ class GameManager
     public function getWinningLines(Game $game): array
     {
         $lines = [];
-        $lines[] = $this->getDiagWinningLine($game);
-        $lines[] = $this->getDiagWinningLine($game, true);
-        foreach ($this->getRowsWinner($game) as $row) {
+        $lines[] = $this->getWinnerDiagonalLine($game);
+        $lines[] = $this->getWinnerDiagonalLine($game, true);
+        foreach ($this->getWinnerStraightLines($game) as $row) {
             $lines[] = $row;
         }
-        foreach ($this->getRowsWinner($game, true) as $col) {
+        foreach ($this->getWinnerStraightLines($game, true) as $col) {
             $lines[] = $col;
         }
-        return array_filter($lines, function($line) use ($game) {
-            return count($line) === $game->getRows();
+        return array_filter($lines, function($line) {
+            return count($line) > 0;
         });
     }
 
@@ -306,7 +306,7 @@ class GameManager
      *
      * @return array
      */
-    public function getDiagWinningLine(Game $game, bool $inverted = false): array
+    public function getWinnerDiagonalLine(Game $game, bool $inverted = false): array
     {
         if ($game->getRows() !== $game->getCols()) {
             return [];
@@ -338,7 +338,7 @@ class GameManager
      *
      * @return array
      */
-    public function getRowsWinner(Game $game, $inverted = false): array
+    public function getWinnerStraightLines(Game $game, $inverted = false): array
     {
         $board = $inverted ? $this->flipRowCol($game->getBoard()) : $game->getBoard();
         $winningRows = [];
