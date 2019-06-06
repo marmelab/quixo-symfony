@@ -48,6 +48,25 @@ class GameManager
     }
 
     /**
+     * Set the selected cube in Game and save it
+     *
+     * @param  Game   $game
+     * @param  Coords $coords
+     *
+     * @return Game
+     */
+    public function selectCube(Game $game, Coords $coords): Game
+    {
+        $game->setSelectedCube([
+            'x' => $coords->getX(),
+            'y' => $coords->getY(),
+        ]);
+        $this->gameRepository->save($game);
+
+        return $game;
+    }
+
+    /**
      * Play a cube and save the game
      *
      * @param  Game   $game
@@ -58,8 +77,13 @@ class GameManager
      */
     public function playCube(Game $game, Coords $coords, int $team): Game
     {
-        $newBoard = $this->moveCube($game, $coords, $team);
+        $selectedCube = $game->getSelectedCube();
+        $coordsStart = new Coords($selectedCube['x'], $selectedCube['y']);
+        $newBoard = $this->moveCube($game, $coordsStart, $coords, $team);
         $game->setBoard($newBoard);
+
+        $game->setSelectedCube(null);
+
         $this->gameRepository->save($game);
 
         return $game;
@@ -85,7 +109,7 @@ class GameManager
     }
 
     /**
-     * Return an array of movables cubes
+     * Return an array of coords of the movables cubes
      *
      * @param  Game  $game
      * @param  int   $team
@@ -101,7 +125,7 @@ class GameManager
                 $coords = new Coords($x, $y);
                 $cube = new Cube($coords, $board[$x][$y]);
                 if ($this->isMovableCube($game, $cube, $team)) {
-                    $movables[] = $cube;
+                    $movables[] = $coords;
                 }
             }
         }
@@ -149,22 +173,21 @@ class GameManager
      *
      * @return array
      */
-    public function moveCube(Game $game, Coords $coords, int $value): array
+    public function moveCube(Game $game, Coords $coordsStart, Coords $coordsEnd, int $value): array
     {
         $board = $game->getBoard();
-        $coordsEnd = $this->getOppositeCube($game, $coords);
-        if ($coords->getX() === $coordsEnd->getX()) {
+        if ($coordsStart->getX() === $coordsEnd->getX()) {
             $board = $this->shiftRow($board, $value, [
-                'rowIndex' => $coords->getX(),
-                'xStart' => $coords->getY(),
+                'rowIndex' => $coordsStart->getX(),
+                'xStart' => $coordsStart->getY(),
                 'xEnd' => $coordsEnd->getY(),
             ]);
         }
-        elseif ($coords->getY() === $coordsEnd->getY()) {
+        elseif ($coordsStart->getY() === $coordsEnd->getY()) {
             $flippedBoard = $this->flipRowCol($board);
             $flippedBoard = $this->shiftRow($flippedBoard, $value, [
-                'rowIndex' => $coords->getY(),
-                'xStart' => $coords->getX(),
+                'rowIndex' => $coordsStart->getY(),
+                'xStart' => $coordsStart->getX(),
                 'xEnd' => $coordsEnd->getX(),
             ]);
             $board = $this->flipRowCol($flippedBoard);
@@ -372,5 +395,98 @@ class GameManager
     {
         $game->setWinner($winner);
         $this->gameRepository->save($game);
+    }
+
+    /**
+     * Return the coords of the allowed destinations from the selected cube
+     *
+     * @param  Game $game
+     *
+     * @return array
+     */
+    public function getAllowedDestinations(Game $game): array
+    {
+        $selectedCube = $game->getSelectedCube();
+        if ($selectedCube === null || !isset($selectedCube['x']) || !isset($selectedCube['y'])) {
+            return [];
+        }
+        $x = $selectedCube['x'];
+        $y = $selectedCube['y'];
+        $indexLastRow = $game->getRows() - 1;
+        $indexLastCol = $game->getCols() - 1;
+        $destinations = ($x === 0 || $x === $indexLastRow)
+            ? $this->getDestinationsForOutsideRow($x, $y, $indexLastRow, $indexLastCol)
+            : $this->getDestinationsForOutsideCol($x, $y, $indexLastRow, $indexLastCol);
+        return $destinations;
+    }
+
+    /**
+     * Get destinations for a cube of x and y coords if it's on an oustide row
+     *
+     * @param int $x
+     * @param int $y
+     * @param int $lastRow
+     * @param int $lastCol
+     *
+     * @return array
+     */
+    public function getDestinationsForOutsideRow($x, $y, $lastRow, $lastCol): array
+    {
+        if ($x !== 0 && $x !== $lastRow) {
+            return [];
+        }
+        $destinations = [];
+        if ($y !== 0) {
+            $destinations[] = new Coords($x, 0);
+        }
+        if ($y !== $lastCol) {
+            $destinations[] = new Coords($x, $lastCol);
+        }
+        $oppositeX = $x === $lastRow ? 0 : $lastRow;
+        $destinations[] = new Coords($oppositeX, $y);
+
+        return $destinations;
+    }
+
+    /**
+     * Get destinations for a cube of x and y coords if it's on an oustide col
+     *
+     * @param int $x
+     * @param int $y
+     * @param int $lastRow
+     * @param int $lastCol
+     *
+     * @return array
+     */
+    public function getDestinationsForOutsideCol($x, $y, $lastRow, $lastCol): array
+    {
+        if ($y === 0 && $y === $lastCol) {
+            return [];
+        }
+        $destinations = [];
+        if ($x !== 0) {
+            $destinations[] = new Coords(0, $y);
+        }
+        if ($x !== $lastRow) {
+            $destinations[] = new Coords($lastRow, $y);
+        }
+        $oppositeY = $y === $lastCol ? 0 : $lastCol;
+        $destinations[] = new Coords($x, $oppositeY);
+
+        return $destinations;
+    }
+
+    /**
+     * Get movables or destinations if a cube has been selected or not
+     *
+     * @param  Game $game
+     *
+     * @return array
+     */
+    public function getMovablesOrDestinations(Game $game): array
+    {
+        return $game->getSelectedCube() === null
+            ? $this->getMovables($game, $game->getCurrentPlayer())
+            : $this->getAllowedDestinations($game);
     }
 }

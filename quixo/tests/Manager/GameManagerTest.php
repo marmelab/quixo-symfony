@@ -39,25 +39,14 @@ class GameUtilsTest extends TestCase
         $game = new Game();
         $game->setBoard($manager->getEmptyBoard($game->getRows(), $game->getCols()));
 
-        $expected_movables = [
-            ['x' => 0, 'y'=> 0], ['x' => 0, 'y'=> 1], ['x' => 0, 'y'=> 2], ['x' => 0, 'y'=> 3], ['x' => 0, 'y'=> 4],
-            ['x' => 1, 'y'=> 0], ['x' => 1, 'y'=> 4], ['x' => 2, 'y'=> 0],
-            ['x' => 2, 'y'=> 4], ['x' => 3, 'y'=> 0], ['x' => 3, 'y'=> 4],
-            ['x' => 4, 'y'=> 0], ['x' => 4, 'y'=> 1], ['x' => 4, 'y'=> 2], ['x' => 4, 'y'=> 3], ['x' => 4, 'y'=> 4]
+        $expectedMovables = [
+            new Coords(0, 0), new Coords(0, 1), new Coords(0, 2), new Coords(0, 3), new Coords(0, 4),
+            new Coords(1, 0), new Coords(1, 4), new Coords(2, 0),
+            new Coords(2, 4), new Coords(3, 0), new Coords(3, 4),
+            new Coords(4, 0), new Coords(4, 1), new Coords(4, 2), new Coords(4, 3), new Coords(4, 4)
         ];
-        $found = 0;
         $movables = $manager->getMovables($game);
-
-        foreach ($movables as $cube) {
-            $coords = $cube->getCoords();
-            foreach ($expected_movables as $expected) {
-                if ($coords->getX() == $expected['x'] && $coords->getY() == $expected['y']) {
-                    $found++;
-                    break;
-                }
-            }
-        }
-        $this->assertEquals(count($expected_movables), $found, count($movables));
+        $this->checkArrayOfCoordsAreEquals($expectedMovables, $movables);
     }
 
     /**
@@ -127,7 +116,8 @@ class GameUtilsTest extends TestCase
         $game->setBoard($initBoard);
 
         $cubeStart = new Coords(0, 1);
-        $board = $manager->moveCube($game, $cubeStart, 1);
+        $cubeEnd = new Coords(4, 1);
+        $board = $manager->moveCube($game, $cubeStart, $cubeEnd, 1);
         $this->assertEquals($board, $expectedBoard);
     }
 
@@ -227,5 +217,158 @@ class GameUtilsTest extends TestCase
 
         $this->assertEquals(1, $winner);
         $this->assertEquals(count($winningCubes), 5);
+    }
+
+    public function testGetAllowedDestinationsFromCorner(): void
+    {
+        $gameRepository = $this->createMock(GameRepository::class);
+        $manager = new GameManager($gameRepository);
+        $game = new Game();
+        $board = [
+            [1, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0]
+        ];
+        $game->setBoard($board);
+        $game->setSelectedCube(['x' => 0, 'y' => 0]);
+        $expectedDestinations = [new Coords(0, 4), new Coords(4, 0)];
+        $destinations = $manager->getAllowedDestinations($game);
+
+        $this->checkArrayOfCoordsAreEquals($expectedDestinations, $destinations);
+    }
+
+    public function testGetAllowedDestinationsFromRow(): void
+    {
+        $gameRepository = $this->createMock(GameRepository::class);
+        $manager = new GameManager($gameRepository);
+        $game = new Game();
+        $board = [
+            [0, 1, 0, 0, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0]
+        ];
+        $game->setBoard($board);
+        $game->setSelectedCube(['x' => 0, 'y' => 1]);
+        $expectedDestinations = [new Coords(0, 0), new Coords(0, 4), new Coords(4, 1)];
+        $destinations = $manager->getAllowedDestinations($game);
+
+        $this->checkArrayOfCoordsAreEquals($expectedDestinations, $destinations);
+    }
+
+    public function testGetAllowedDestinationsFromCol(): void
+    {
+        $gameRepository = $this->createMock(GameRepository::class);
+        $manager = new GameManager($gameRepository);
+        $game = new Game();
+        $board = [
+            [0, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0]
+        ];
+        $game->setBoard($board);
+        $game->setSelectedCube(['x' => 1, 'y' => 0]);
+        $expectedDestinations = [new Coords(0, 0), new Coords(4, 0), new Coords(1, 4)];
+        $destinations = $manager->getAllowedDestinations($game);
+
+        $this->checkArrayOfCoordsAreEquals($expectedDestinations, $destinations);
+    }
+
+    public function testGetMovablesOrDestinationsWhenNoCubeSelected(): void
+    {
+        $gameRepository = $this->createMock(GameRepository::class);
+        $manager = new GameManager($gameRepository);
+        $game = new Game();
+        $board = [
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0]
+        ];
+        $game->setBoard($board);
+        $expectedMovables = [
+            new Coords(0, 0), new Coords(0, 1), new Coords(0, 2), new Coords(0, 3), new Coords(0, 4),
+            new Coords(1, 0), new Coords(1, 4), new Coords(2, 0),
+            new Coords(2, 4), new Coords(3, 0), new Coords(3, 4),
+            new Coords(4, 0), new Coords(4, 1), new Coords(4, 2), new Coords(4, 3), new Coords(4, 4)
+        ];
+        $movables = $manager->getMovablesOrDestinations($game);
+        $this->checkArrayOfCoordsAreEquals($expectedMovables, $movables);
+    }
+
+    public function testGetMovablesOrDestinationsWhenCubeSelected(): void
+    {
+        $gameRepository = $this->createMock(GameRepository::class);
+        $manager = new GameManager($gameRepository);
+        $game = new Game();
+        $board = [
+            [1, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0]
+        ];
+        $game->setBoard($board);
+        $game->setSelectedCube(['x' => 0, 'y' => 0]);
+        $expectedDestinations = [new Coords(0, 4), new Coords(4, 0)];
+        $destinations = $manager->getMovablesOrDestinations($game);
+        $this->checkArrayOfCoordsAreEquals($expectedDestinations, $destinations);
+    }
+
+    /**
+     * Test for a cube of coords 0 1
+     *
+     * @return void
+     */
+    public function testGetDestinationForOustideRow(): void
+    {
+        $gameRepository = $this->createMock(GameRepository::class);
+        $manager = new GameManager($gameRepository);
+        $x = 0;
+        $y = 1;
+        $lastRow = 4;
+        $lastCol = 4;
+        $expectedDestinations = [new Coords(0,0), new Coords(0, 4), new Coords(4, 1)];
+        $destinations = $manager->getDestinationsForOutsideRow($x, $y, $lastRow, $lastCol);
+        $this->checkArrayOfCoordsAreEquals($expectedDestinations, $destinations);
+    }
+
+    /**
+     * Test for a cube of coords 1 0
+     *
+     * @return void
+     */
+    public function testGetDestinationForOustideCol(): void
+    {
+        $gameRepository = $this->createMock(GameRepository::class);
+        $manager = new GameManager($gameRepository);
+        $x = 1;
+        $y = 0;
+        $lastRow = 4;
+        $lastCol = 4;
+        $expectedDestinations = [new Coords(0,0), new Coords(4, 0), new Coords(1, 4)];
+        $destinations = $manager->getDestinationsForOutsideCol($x, $y, $lastRow, $lastCol);
+        $this->checkArrayOfCoordsAreEquals($expectedDestinations, $destinations);
+    }
+
+    private function checkArrayOfCoordsAreEquals(array $array1, array $array2): void
+    {
+        $this->assertEquals(count($array1), count($array2));
+
+        foreach ($array1 as $dest1) {
+            $found = false;
+            foreach ($array2 as $dest2) {
+                if ($dest1->getX() === $dest2->getX() && $dest1->getY() === $dest2->getY()) {
+                    $found = true;
+                }
+            }
+            $this->assertTrue($found);
+        }
     }
 }

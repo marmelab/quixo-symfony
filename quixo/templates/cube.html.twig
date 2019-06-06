@@ -1,10 +1,14 @@
 {% set isWinningCube = winningCubes|isCoordsInCubeArray(x, y) %}
+{% set isSelectedCube = game.selectedCube.x|default(-1) == x and game.selectedCube.y|default(-1) == y %}
 {% set className = 'cube cube-' ~ cube|getCubeSymbol %}
 {% if isWinningCube %}
     {% set className = className ~ ' winning-cube' %}
 {% endif %}
+{% if isSelectedCube %}
+    {% set className = className ~ ' selected-cube' %}
+{% endif %}
 <div class="{{className}}">
-    {% if movables|isCoordsInCubeArray(x, y) %}
+    {% if movables|isCoordsInCoordsArray(x, y) %}
         <form
             class="form-cube"
             action="{{ url('game', { id: game.id }) }}"

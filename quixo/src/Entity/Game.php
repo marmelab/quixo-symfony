@@ -34,6 +34,9 @@ class Game
     /** @ORM\Column(type="integer") */
     private $currentPlayer;
 
+    /** @ORM\Column(type="json", nullable=true) */
+    private $selectedCube;
+
     /**
      * __construct
      *
@@ -198,6 +201,26 @@ class Game
     public function setWinningLine($winningLine)
     {
         $this->winningLine = $winningLine;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of selectedCube
+     */
+    public function getSelectedCube(): ?array
+    {
+        return $this->selectedCube;
+    }
+
+    /**
+     * Set the value of selectedCube
+     *
+     * @return  self
+     */
+    public function setSelectedCube($selectedCube): Game
+    {
+        $this->selectedCube = $selectedCube;
 
         return $this;
     }

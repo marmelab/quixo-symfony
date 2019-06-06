@@ -11,10 +11,11 @@
     display: inline-block;
     border-radius: 5%;
     border: solid 1px black;
+    background-size: 100px;
 }
 
 .cube-cross {
-    background: red;
+    background-image: url('../images/cross.png');
 }
 
 .btn {
@@ -44,7 +45,7 @@
 }
 
 .winning-cube {
-    background: green;
+    background-color: green;
 }
 
 .header {
@@ -58,4 +59,8 @@
 
 .action-buttons {
     position: fixed;
+}
+
+.selected-cube {
+    background: cyan;
 }
