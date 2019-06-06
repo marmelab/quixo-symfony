@@ -58,8 +58,20 @@ class GameManager
      */
     public function playCube(Game $game, Coords $coords, int $team): Game
     {
-        $newBoard = $this->moveCube($game, $coords, $team);
-        $game->setBoard($newBoard);
+        if ($game->getSelectedCube() === null) {
+            $game->setSelectedCube([
+                'x' => $coords->getX(),
+                'y' => $coords->getY(),
+            ]);
+            $this->gameRepository->save($game);
+        } else {
+            $selectedCube = $game->getSelectedCube();
+            $coordsStart = new Coords($selectedCube['x'], $selectedCube['y']);
+            $newBoard = $this->moveCube($game, $coordsStart, $coords, $team);
+            $game->setBoard($newBoard);
+            $game->setSelectedCube(null);
+        }
+
         $this->gameRepository->save($game);
 
         return $game;
@@ -149,22 +161,21 @@ class GameManager
      *
      * @return array
      */
-    public function moveCube(Game $game, Coords $coords, int $value): array
+    public function moveCube(Game $game, Coords $coordsStart, Coords $coordsEnd, int $value): array
     {
         $board = $game->getBoard();
-        $coordsEnd = $this->getOppositeCube($game, $coords);
-        if ($coords->getX() === $coordsEnd->getX()) {
+        if ($coordsStart->getX() === $coordsEnd->getX()) {
             $board = $this->shiftRow($board, $value, [
-                'rowIndex' => $coords->getX(),
-                'xStart' => $coords->getY(),
+                'rowIndex' => $coordsStart->getX(),
+                'xStart' => $coordsStart->getY(),
                 'xEnd' => $coordsEnd->getY(),
             ]);
         }
-        elseif ($coords->getY() === $coordsEnd->getY()) {
+        elseif ($coordsStart->getY() === $coordsEnd->getY()) {
             $flippedBoard = $this->flipRowCol($board);
             $flippedBoard = $this->shiftRow($flippedBoard, $value, [
-                'rowIndex' => $coords->getY(),
-                'xStart' => $coords->getX(),
+                'rowIndex' => $coordsStart->getY(),
+                'xStart' => $coordsStart->getX(),
                 'xEnd' => $coordsEnd->getX(),
             ]);
             $board = $this->flipRowCol($flippedBoard);
@@ -372,5 +383,14 @@ class GameManager
     {
         $game->setWinner($winner);
         $this->gameRepository->save($game);
+    }
+
+    public function getAllowedDestinations(Game $game)
+    {
+        $board = $game->getBoard();
+        $selectedCube = $game->getSelectedCube();
+        if ($selectedCube === null || !isset($selectedCube['x']) || !isset($selectedCube['y'])) {
+            return [];
+        }
     }
 }
