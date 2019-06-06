@@ -23,16 +23,16 @@ class GameManager
     /**
      * Create a new game and return id
      *
-     * @return int the id of the game
+     * @return Game
      */
-    public function createGame(): int
+    public function createGame(): Game
     {
         $game = new Game();
         $newBoard = $this->getEmptyBoard($game->getRows(), $game->getCols());
         $game->setBoard($newBoard);
         $this->gameRepository->save($game);
 
-        return $game->getId();
+        return $game;
     }
 
     /**
@@ -245,5 +245,127 @@ class GameManager
             }
         }
         return $out;
+    }
+
+    /**
+     * Check if there is a winner, update Game
+     *
+     * @param  Game $game
+     *
+     * @return Game
+     */
+    public function checkWinner(Game $game): Game
+    {
+        $board = $game->getBoard();
+        $currentPlayer = $game->getNextPlayer();
+        $winningLines = $this->getWinningLines($game);
+        $winner = null;
+        $winCubes = null;
+        foreach ($winningLines as $line) {
+            $cube = $line[0];
+            $winningPlayer = $board[$cube['x']][$cube['y']];
+            $winner = $winningPlayer;
+            $winCubes = $line;
+            if ($winner !== $currentPlayer) {
+                break;
+            }
+        }
+        if (winner !== null && $winCubes !== null) {
+            $game->setWinner($winner);
+            $game->setWinningLine($winCubes);
+            $this->gameRepository->save($game);
+        }
+        return $game;
+    }
+
+    /**
+     * Get winning lines
+     *
+     * @param  Game $game
+     *
+     * @return array with all winning lines
+     */
+    public function getWinningLines(Game $game): array
+    {
+        $lines = [];
+        $lines[] = $this->getDiagWinner($game);
+        $lines[] = $this->getDiagWinner($game, true);
+        foreach ($this->getRowsWinner($game) as $row) {
+            $lines[] = $row;
+        }
+        foreach ($this->getRowsWinner($game, true) as $col) {
+            $lines[] = $col;
+        }
+        return array_filter($lines, function($line) use ($game) {
+            return count($line) === $game->getRows();
+        });
+    }
+
+    /**
+     * Get the winning cube if exist
+     *
+     * @param  Game  $game
+     * @param  bool  $inverted
+     *
+     * @return array
+     */
+    public function getDiagWinningLine(Game $game, bool $inverted = false): array
+    {
+        if ($game->getRows() !== $game->getCols()) {
+            return [];
+        }
+        $board = $game->getBoard();
+        $winCubes = [];
+        $prevValue = null;
+        for ($i = 0; $i < $game->getRows(); $i++) {
+            $x = $i;
+            $y = $inverted ? $game->getRows() - 1 - $i : $i;
+            $value = $board[$x][$y];
+            if ($prevValue === null) {
+                $prevValue = $value;
+            }
+            if ($value === $prevValue && $value !== GameManager::NEUTRAL_VALUE) {
+                $winCubes[] = [
+                    'x' => $x,
+                    'y' => $y,
+                ];
+            } else {
+                return [];
+            }
+        }
+        return $winCubes;
+    }
+
+    /**
+     * Get winning lines
+     *
+     * @param  Game $game
+     * @param  bool $inverted
+     *
+     * @return array
+     */
+    public function getRowsWinner(Game $game, $inverted = false): array
+    {
+        $board = $inverted ? $this->flipRowCol($game->getBoard()) : $game->getBoard();
+        $winningRows = [];
+        for ($x = 0; $x < count($board); $x++) {
+            $row = [];
+            $prevValue = null;
+            for ($y = 0; $y < count($board[$x]); $y++) {
+                $value = $board[$x][$y];
+                if ($prevValue === null) {
+                    $prevValue = $value;
+                }
+                if ($value === $prevValue && $value !== GameManager::NEUTRAL_VALUE) {
+                    $row[] = $inverted ? ['x' => $y, 'y' => $x] : ['x' => $x, 'y' => $y];
+                } else {
+                    break;
+                }
+            }
+            if (count($row) === count($board($x))) {
+                $winningRows[] = $row;
+            }
+        }
+        return $winningRows;
     }
 }

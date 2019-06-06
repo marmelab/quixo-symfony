@@ -20,9 +20,9 @@ class GameController extends AbstractController
      */
     public function newGame(GameManager $gameManager): Response
     {
-        $gameId = $gameManager->createGame();
+        $game = $gameManager->createGame();
 
-        return $this->redirectToRoute('game', ['id' => $gameId]);
+        return $this->redirectToRoute('game', ['id' => $game->getId()]);
     }
 
     /**
