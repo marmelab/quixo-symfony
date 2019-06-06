@@ -414,10 +414,9 @@ class GameManager
         $y = $selectedCube['y'];
         $indexLastRow = $game->getRows() - 1;
         $indexLastCol = $game->getCols() - 1;
-        $destinations = array_merge(
-            $this->getDestinationsForOutsideRow($x, $y, $indexLastRow, $indexLastCol),
-            $this->getDestinationsForOutsideCol($x, $y, $indexLastRow, $indexLastCol)
-        );
+        $destinations = ($x === 0 || $x === $indexLastRow)
+            ? $this->getDestinationsForOutsideRow($x, $y, $indexLastRow, $indexLastCol)
+            : $this->getDestinationsForOutsideCol($x, $y, $indexLastRow, $indexLastCol);
         return $destinations;
     }
 
