@@ -47,13 +47,14 @@ class GameController extends AbstractController
             $game = $gameManager->playCube($game, $coordsSelected, GameManager::CROSS_TEAM);
         }
 
-        $winningCubes = $gameManager->resolveWinner($game);
-
-        if ($game->getWinner() === null) {
-            $movables = $gameManager->getMovables($game, GameManager::CROSS_TEAM);
-        } else {
-            $movables = [];
+        list($winner, $winningCubes) = $gameManager->getWinnerAndWinningCubes($game);
+        if ($winner !== $game->getWinner()) {
+            $gameManager->persistWinner($game, $winner);
         }
+
+        $movables = $game->getWinner() === null
+            ? $gameManager->getMovables($game, GameManager::CROSS_TEAM)
+            : [];
 
         return new Response($twig->render('game.html.twig', [
             'game' => $game,

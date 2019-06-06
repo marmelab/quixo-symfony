@@ -252,9 +252,9 @@ class GameManager
      *
      * @param  Game $game
      *
-     * @return array of Cube
+     * @return array with winner and an array of the winningCubes
      */
-    public function resolveWinner(Game $game): array
+    public function getWinnerAndWinningCubes(Game $game): array
     {
         $currentPlayer = $game->getCurrentPlayer();
         $winningLines = $this->getWinningLines($game);
@@ -268,11 +268,7 @@ class GameManager
                 break;
             }
         }
-        if ($winner !== null && $winCubes !== null) {
-            $game->setWinner($winner);
-            $this->gameRepository->save($game);
-        }
-        return $winCubes;
+        return [$winner, $winCubes];
     }
 
     /**
@@ -362,5 +358,19 @@ class GameManager
             }
         }
         return $winningRows;
+    }
+
+    /**
+     * Persist the winner
+     *
+     * @param  Game $game
+     * @param  int  $winner
+     *
+     * @return void
+     */
+    public function persistWinner(Game $game, int $winner): void
+    {
+        $game->setWinner($winner);
+        $this->gameRepository->save($game);
     }
 }

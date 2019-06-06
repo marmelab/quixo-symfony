@@ -39,6 +39,8 @@
     background: none;
     border-radius: 5%;
     border: solid 2px green;
+    outline: none;
+    padding: 0;
 }
 
 .winning-cube {

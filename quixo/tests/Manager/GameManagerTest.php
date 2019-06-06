@@ -149,9 +149,9 @@ class GameUtilsTest extends TestCase
             [0, 1, 1, 0, 0]
         ];
         $game->setBoard($noWinBoard);
-        $winningCubes = $manager->resolveWinner($game);
+        list($winner, $winningCubes) = $manager->getWinnerAndWinningCubes($game);
 
-        $this->assertEquals(null, $game->getWinner());
+        $this->assertEquals(null, $winner);
         $this->assertEquals(count($winningCubes), 0);
     }
 
@@ -173,9 +173,9 @@ class GameUtilsTest extends TestCase
             [0, 0, 0, 0, 0]
         ];
         $game->setBoard($winBoard);
-        $winningCubes = $manager->resolveWinner($game);
+        list($winner, $winningCubes) = $manager->getWinnerAndWinningCubes($game);
 
-        $this->assertEquals(1, $game->getWinner());
+        $this->assertEquals(1, $winner);
         $this->assertEquals(count($winningCubes), 5);
     }
 
@@ -199,9 +199,9 @@ class GameUtilsTest extends TestCase
             [0, 0, 0, 0, 0]
         ];
         $game->setBoard($winBoard);
-        $winningCubes = $manager->resolveWinner($game);
+        list($winner, $winningCubes) = $manager->getWinnerAndWinningCubes($game);
 
-        $this->assertEquals($winningPlayer, $game->getWinner());
+        $this->assertEquals($winningPlayer, $winner);
         $this->assertEquals(count($winningCubes), 5);
     }
 
@@ -223,9 +223,9 @@ class GameUtilsTest extends TestCase
             [0, 0, 0, 0, 1]
         ];
         $game->setBoard($winBoard);
-        $winningCubes = $manager->resolveWinner($game);
+        list($winner, $winningCubes) = $manager->getWinnerAndWinningCubes($game);
 
-        $this->assertEquals(1, $game->getWinner());
+        $this->assertEquals(1, $winner);
         $this->assertEquals(count($winningCubes), 5);
     }
 }
