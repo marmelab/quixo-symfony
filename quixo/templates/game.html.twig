@@ -5,7 +5,7 @@
     </div>
     {% if game.winner %}
         <div class="winner">
-            Player {{ game.winner|getPlayerName }} has won the game !
+            {{ game.winner|getPlayerName }} has won the game !
         </div>
     {% endif %}
 {% endblock %}

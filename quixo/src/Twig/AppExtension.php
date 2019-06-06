@@ -70,6 +70,6 @@ class AppExtension extends AbstractExtension
      */
     public function getPlayerName($value): string
     {
-        return $value === 1 ? '1' : '2';
+        return $value === 1 ? 'Player 1' : 'Player 2';
     }
 }
