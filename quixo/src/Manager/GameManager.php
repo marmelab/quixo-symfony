@@ -414,26 +414,66 @@ class GameManager
         $y = $selectedCube['y'];
         $indexLastRow = $game->getRows() - 1;
         $indexLastCol = $game->getCols() - 1;
-        $destinations = [];
-        if ($x === 0 or $x === $indexLastRow) {
-            if ($y !== 0) {
-                $destinations[] = new Coords($x, 0);
-            }
-            if ($y !== $indexLastCol) {
-                $destinations[] = new Coords($x, $indexLastCol);
-            }
-            $oppositeX = $x === $indexLastRow ? 0 : $indexLastRow;
-            $destinations[] = new Coords($oppositeX, $y);
-        } elseif ($y === 0 or $y === $indexLastCol) {
-            if ($x !== 0) {
-                $destinations[] = new Coords(0, $y);
-            }
-            if ($x !== $indexLastRow) {
-                $destinations[] = new Coords($indexLastRow, $y);
-            }
-            $oppositeY = $y === $indexLastCol ? 0 : $indexLastCol;
-            $destinations[] = new Coords($x, $oppositeY);
+        $destinations = array_merge(
+            $this->getDestinationsForOutsideRow($x, $y, $indexLastRow, $indexLastCol),
+            $this->getDestinationsForOutsideCol($x, $y, $indexLastRow, $indexLastCol)
+        );
+        return $destinations;
+    }
+
+    /**
+     * Get destinations for a cube of x and y coords if it's on an oustide row
+     *
+     * @param int $x
+     * @param int $y
+     * @param int $lastRow
+     * @param int $lastCol
+     *
+     * @return array
+     */
+    public function getDestinationsForOutsideRow($x, $y, $lastRow, $lastCol): array
+    {
+        if ($x !== 0 && $x !== $lastRow) {
+            return [];
         }
+        $destinations = [];
+        if ($y !== 0) {
+            $destinations[] = new Coords($x, 0);
+        }
+        if ($y !== $lastCol) {
+            $destinations[] = new Coords($x, $lastCol);
+        }
+        $oppositeX = $x === $lastRow ? 0 : $lastRow;
+        $destinations[] = new Coords($oppositeX, $y);
+
+        return $destinations;
+    }
+
+    /**
+     * Get destinations for a cube of x and y coords if it's on an oustide col
+     *
+     * @param int $x
+     * @param int $y
+     * @param int $lastRow
+     * @param int $lastCol
+     *
+     * @return array
+     */
+    public function getDestinationsForOutsideCol($x, $y, $lastRow, $lastCol): array
+    {
+        if ($y === 0 && $y === $lastCol) {
+            return [];
+        }
+        $destinations = [];
+        if ($x !== 0) {
+            $destinations[] = new Coords(0, $y);
+        }
+        if ($x !== $lastRow) {
+            $destinations[] = new Coords($lastRow, $y);
+        }
+        $oppositeY = $y === $lastCol ? 0 : $lastCol;
+        $destinations[] = new Coords($x, $oppositeY);
+
         return $destinations;
     }
 
