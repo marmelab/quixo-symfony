@@ -19,6 +19,7 @@ class AppExtension extends AbstractExtension
         return [
             new TwigFilter('getCubeSymbol', [$this, 'getCubeSymbol']),
             new TwigFilter('isCoordsInCubeArray', [$this, 'isCoordsInCubeArray']),
+            new TwigFilter('isCoordsInCoordsArray', [$this, 'isCoordsInCoordsArray']),
             new TwigFilter('getPlayerName', [$this, 'getPlayerName']),
         ];
     }
@@ -42,7 +43,26 @@ class AppExtension extends AbstractExtension
     }
 
     /**
-     * Check if cube is in movables array
+     * Check if cube is in coords array
+     *
+     * @param  array $movables
+     * @param  int   $x
+     * @param  int   $y
+     *
+     * @return bool
+     */
+    public function isCoordsInCoordsArray(array $movables, int $x, int $y): bool
+    {
+        foreach ($movables as $coords) {
+            if ($coords->getX() === $x && $coords->getY() === $y) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Check if cube is in cubes array
      *
      * @param  array $movables
      * @param  int   $x

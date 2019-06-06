@@ -48,6 +48,25 @@ class GameManager
     }
 
     /**
+     * Set the selected cube in Game and save it
+     *
+     * @param  Game   $game
+     * @param  Coords $coords
+     *
+     * @return Game
+     */
+    public function selectCube(Game $game, Coords $coords): Game
+    {
+        $game->setSelectedCube([
+            'x' => $coords->getX(),
+            'y' => $coords->getY(),
+        ]);
+        $this->gameRepository->save($game);
+
+        return $game;
+    }
+
+    /**
      * Play a cube and save the game
      *
      * @param  Game   $game
@@ -58,19 +77,12 @@ class GameManager
      */
     public function playCube(Game $game, Coords $coords, int $team): Game
     {
-        if ($game->getSelectedCube() === null) {
-            $game->setSelectedCube([
-                'x' => $coords->getX(),
-                'y' => $coords->getY(),
-            ]);
-            $this->gameRepository->save($game);
-        } else {
-            $selectedCube = $game->getSelectedCube();
-            $coordsStart = new Coords($selectedCube['x'], $selectedCube['y']);
-            $newBoard = $this->moveCube($game, $coordsStart, $coords, $team);
-            $game->setBoard($newBoard);
-            $game->setSelectedCube(null);
-        }
+        $selectedCube = $game->getSelectedCube();
+        $coordsStart = new Coords($selectedCube['x'], $selectedCube['y']);
+        $newBoard = $this->moveCube($game, $coordsStart, $coords, $team);
+        $game->setBoard($newBoard);
+
+        $game->setSelectedCube(null);
 
         $this->gameRepository->save($game);
 
@@ -97,7 +109,7 @@ class GameManager
     }
 
     /**
-     * Return an array of movables cubes
+     * Return an array of coords of the movables cubes
      *
      * @param  Game  $game
      * @param  int   $team
@@ -113,7 +125,7 @@ class GameManager
                 $coords = new Coords($x, $y);
                 $cube = new Cube($coords, $board[$x][$y]);
                 if ($this->isMovableCube($game, $cube, $team)) {
-                    $movables[] = $cube;
+                    $movables[] = $coords;
                 }
             }
         }
@@ -385,12 +397,57 @@ class GameManager
         $this->gameRepository->save($game);
     }
 
-    public function getAllowedDestinations(Game $game)
+    /**
+     * Return the coords of the allowed destinations from the selected cube
+     *
+     * @param  Game $game
+     *
+     * @return array
+     */
+    public function getAllowedDestinations(Game $game): array
     {
-        $board = $game->getBoard();
         $selectedCube = $game->getSelectedCube();
         if ($selectedCube === null || !isset($selectedCube['x']) || !isset($selectedCube['y'])) {
             return [];
         }
+        $x = $selectedCube['x'];
+        $y = $selectedCube['y'];
+        $indexLastRow = $game->getRows() - 1;
+        $indexLastCol = $game->getCols() - 1;
+        $destinations = [];
+        if ($x === 0 or $x === $indexLastRow) {
+            if ($y !== 0) {
+                $destinations[] = new Coords($x, 0);
+            }
+            if ($y !== $indexLastCol) {
+                $destinations[] = new Coords($x, $indexLastCol);
+            }
+            $oppositeX = $x === $indexLastRow ? 0 : $indexLastRow;
+            $destinations[] = new Coords($oppositeX, $y);
+        } elseif ($y === 0 or $y === $indexLastCol) {
+            if ($x !== 0) {
+                $destinations[] = new Coords(0, $y);
+            }
+            if ($x !== $indexLastRow) {
+                $destinations[] = new Coords($indexLastRow, $y);
+            }
+            $oppositeY = $y === $indexLastCol ? 0 : $indexLastCol;
+            $destinations[] = new Coords($x, $oppositeY);
+        }
+        return $destinations;
+    }
+
+    /**
+     * Get movables or destinations if a cube has been selected or not
+     *
+     * @param  Game $game
+     *
+     * @return array
+     */
+    public function getMovablesOrDestinations(Game $game): array
+    {
+        return $game->getSelectedCube() === null
+            ? $this->getMovables($game, $game->getCurrentPlayer())
+            : $this->getAllowedDestinations($game);
     }
 }

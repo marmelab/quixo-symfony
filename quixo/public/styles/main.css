@@ -59,3 +59,7 @@
 .action-buttons {
     position: fixed;
 }
+
+.selected-cube {
+    background: cyan;
+}
