@@ -437,6 +437,7 @@ class GameManagerTest extends TestCase
         $gameRepository = $this->createMock(GameRepository::class);
         $manager = new GameManager($gameRepository);
         $game = new Game();
+
         $coordsSelectedCube = new Coords(0, 0);
         $game->setSelectedCube([
             'x' => $coordsSelectedCube->getX(),
@@ -466,5 +467,23 @@ class GameManagerTest extends TestCase
         $this->assertTrue($turnDone);
         $this->assertEquals($expectedBoard, $game->getBoard());
         $this->assertEquals(null, $game->getSelectedCube());
+    }
+
+    /**
+     * Test that switch player update game
+     *
+     * @return void
+     */
+    public function testSwitchPlayer(): void
+    {
+        $gameRepository = $this->createMock(GameRepository::class);
+        $manager = new GameManager($gameRepository);
+        $game = new Game();
+
+        $game->setCurrentPlayer(GameManager::CIRCLE_TEAM);
+        $manager->switchPlayer($game);
+        $this->assertEquals($game->getCurrentPlayer(), GameManager::CROSS_TEAM);
+        $manager->switchPlayer($game);
+        $this->assertEquals($game->getCurrentPlayer(), GameManager::CIRCLE_TEAM);
     }
 }
