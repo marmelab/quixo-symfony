@@ -91,6 +91,7 @@ class GameController extends AbstractController
             'movables' => $movables,
             'winningCubes' => $winningCubes,
             'waitForPlayer' => $playerTeam !== $game->getCurrentPlayer() && $winner === null,
+            'playerTeam' => $playerTeam,
         ]));
     }
 }
