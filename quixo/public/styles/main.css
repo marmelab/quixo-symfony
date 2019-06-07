@@ -18,6 +18,10 @@
     background-image: url('../images/cross.png');
 }
 
+.cube-circle {
+    background-image: url('../images/circle.png');
+}
+
 .btn {
     background-color: #4CAF50; /* Green */
     border: none;
@@ -62,5 +66,5 @@
 }
 
 .selected-cube {
-    background: cyan;
+    background-color: cyan;
 }

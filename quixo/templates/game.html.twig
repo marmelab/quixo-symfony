@@ -1,4 +1,9 @@
 {% extends 'base.html.twig' %}
+{% block refresh %}
+    {% if waitForPlayer %}
+        <meta http-equiv="refresh" content="1" />
+    {% endif %}
+{% endblock %}
 {% block header %}
     <div class="action-buttons">
         <a class="btn" href="{{ path('newgame') }}">New game</a>

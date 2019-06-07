@@ -6,6 +6,7 @@ use App\Entity\Coords;
 use App\Entity\Cube;
 use App\Repository\GameRepository;
 use App\Entity\Game;
+use Symfony\Component\HttpFoundation\Request;
 
 class GameManager
 {
@@ -458,7 +459,7 @@ class GameManager
      *
      * @return array
      */
-    public function getDestinationsForOutsideCol($x, $y, $lastRow, $lastCol): array
+    public function getDestinationsForOutsideCol(int $x, int $y, int $lastRow, int $lastCol): array
     {
         if ($y === 0 && $y === $lastCol) {
             return [];
@@ -488,5 +489,60 @@ class GameManager
         return $game->getSelectedCube() === null
             ? $this->getMovables($game, $game->getCurrentPlayer())
             : $this->getAllowedDestinations($game);
+    }
+
+    /**
+     * Get movables or destinations if no winner and if the player is the current player
+     *
+     * @param  Game $game
+     * @param  int  $playerTeam
+     *
+     * @return array of Coords (may be empty)
+     */
+    public function getMovablesOrDestinationsForPlayer(Game $game, int $playerTeam): array
+    {
+        if ($game->getWinner() !== null || $game->getCurrentPlayer() !== $playerTeam) {
+            return [];
+        }
+        return $this->getMovablesOrDestinations($game);
+    }
+
+    /**
+     * Update the currentPlayer of the game for the next turn
+     *
+     * @param  Game $game
+     *
+     * @return void
+     */
+    public function switchPlayer(Game $game): void
+    {
+        $currentPlayer = $game->getCurrentPlayer();
+        $nextPlayer  = $currentPlayer === self::CIRCLE_TEAM ? self::CROSS_TEAM : self::CIRCLE_TEAM;
+        $game->setCurrentPlayer($nextPlayer);
+        $this->gameRepository->save($game);
+    }
+
+    /**
+     * Play or select a cube if it's the player turn
+     *
+     * @param  Coords $Coords
+     * @param  Game    $game
+     * @param  int     $playerTeam
+     *
+     * @return bool true if the turn of the player is done
+     */
+    public function playPlayerTurn(Coords $coordsSelected, Game $game, int $playerTeam): bool
+    {
+        if ($playerTeam !== $game->getCurrentPlayer()) {
+            return false;
+        }
+
+        // If game has no selected cube, it's not the end of his turn
+        if ($game->getSelectedCube() === null) {
+            $game = $this->selectCube($game, $coordsSelected);
+            return false;
+        }
+        $game = $this->playCube($game, $coordsSelected, $playerTeam);
+        return true;
     }
 }
