@@ -1,5 +1,5 @@
 <?php
-namespace App\Tests\Utils;
+namespace App\Tests\Manager;
 
 use PHPUnit\Framework\TestCase;
 use App\Manager\GameManager;
@@ -7,7 +7,7 @@ use App\Repository\GameRepository;
 use App\Entity\Game;
 use App\Entity\Coords;
 
-class GameUtilsTest extends TestCase
+class GameManagerTest extends TestCase
 {
 
     /**

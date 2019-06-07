@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class SessionManager
 {
-    private const PREFIX_GAME = 'quixo-';
+    public const PREFIX_GAME = 'quixo-';
 
     private $gameRepository;
     private $session;
