@@ -57,9 +57,9 @@ class GameControllerTest extends WebTestCase
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
 
         $game = new Game();
-
+        $exampleCubeDisplayed = 1;
         $this->assertEquals(
-            $game->getCols() * $game->getRows(),
+            $game->getCols() * $game->getRows() + $exampleCubeDisplayed,
             $crawler->filter('.cube')->count()
         );
     }
