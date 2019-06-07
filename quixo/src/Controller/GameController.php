@@ -120,7 +120,7 @@ class GameController extends AbstractController
         return new Response($twig->render('game.html.twig', [
             'game' => $game,
             'winningCubes' => $winningCubes,
-            'waitForPlayer' => true,
+            'waitForPlayer' => $winner === null,
             'playerTeam' => 0,
             'movables' => [],
         ]));
