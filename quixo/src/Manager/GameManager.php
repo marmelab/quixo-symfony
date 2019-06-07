@@ -517,11 +517,8 @@ class GameManager
     public function switchPlayer(Game $game): void
     {
         $currentPlayer = $game->getCurrentPlayer();
-        if ($currentPlayer === self::CIRCLE_TEAM) {
-            $game->setCurrentPlayer(self::CROSS_TEAM);
-        } else {
-            $game->setCurrentPlayer(self::CIRCLE_TEAM);
-        }
+        $nextPlayer  = $currentPlayer === self::CIRCLE_TEAM ? self::CROSS_TEAM : self::CIRCLE_TEAM;
+        $game->setCurrentPlayer($nextPlayer);
         $this->gameRepository->save($game);
     }
 
