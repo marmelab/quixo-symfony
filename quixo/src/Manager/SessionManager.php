@@ -37,7 +37,7 @@ class SessionManager
      */
     public function getPlayerTeam(Game $game): int
     {
-        return (int)$this->session->get(self::PREFIX_GAME . $game->getId(), 0);
+        return (int) $this->session->get(self::PREFIX_GAME . $game->getId(), 0);
     }
 
     /**

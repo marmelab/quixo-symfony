@@ -35,7 +35,7 @@ class GameControllerTest extends WebTestCase
         $client = static::createClient();
         $client->request('GET', '/assign-player/1');
 
-        $this->assertEquals(302, $client->getResponse()->getStatusCode());
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
     }
 
 
