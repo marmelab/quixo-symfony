@@ -528,21 +528,18 @@ class GameManager
     /**
      * Play or select a cube if it's the player turn
      *
-     * @param  Request $request
+     * @param  Coords $Coords
      * @param  Game    $game
      * @param  int     $playerTeam
      *
      * @return bool true if the turn of the player is done
      */
-    public function playPlayerTurn(Request $request, Game $game, int $playerTeam): bool
+    public function playPlayerTurn(Coords $coordsSelected, Game $game, int $playerTeam): bool
     {
         if ($playerTeam !== $game->getCurrentPlayer()) {
             return false;
         }
-        $coordsSelected = new Coords(
-            $request->request->getInt('x'),
-            $request->request->getInt('y')
-        );
+
         // If game has no selected cube, it's not the end of his turn
         if ($game->getSelectedCube() === null) {
             $game = $this->selectCube($game, $coordsSelected);

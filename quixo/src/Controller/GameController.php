@@ -72,7 +72,8 @@ class GameController extends AbstractController
         $turnDone = false;
 
         if ($this->isCsrfTokenValid('move-cube', $request->request->get('token'))) {
-            $turnDone = $gameManager->playPlayerTurn($request, $game, $playerTeam);
+            $coords = new Coords($request->request->getInt('x'), $request->request->getInt('y'));
+            $turnDone = $gameManager->playPlayerTurn($coords, $game, $playerTeam);
         }
 
         list($winner, $winningCubes) = $gameManager->resolveWinnerAndWinningCubes($game);

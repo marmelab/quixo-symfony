@@ -6,6 +6,7 @@ use App\Manager\GameManager;
 use App\Repository\GameRepository;
 use App\Entity\Game;
 use App\Entity\Coords;
+use Symfony\Component\HttpFoundation\Request;
 
 class GameManagerTest extends TestCase
 {
@@ -357,6 +358,14 @@ class GameManagerTest extends TestCase
         $this->checkArrayOfCoordsAreEquals($expectedDestinations, $destinations);
     }
 
+    /**
+     * Assert that two array of Coords are equals
+     *
+     * @param  array $array1
+     * @param  array $array2
+     *
+     * @return void
+     */
     private function checkArrayOfCoordsAreEquals(array $array1, array $array2): void
     {
         $this->assertEquals(count($array1), count($array2));
@@ -370,5 +379,92 @@ class GameManagerTest extends TestCase
             }
             $this->assertTrue($found);
         }
+    }
+
+    /**
+     * If it's not my turn, it shouldn't change the state of game
+     *
+     * @return void
+     */
+    public function testPlayPlayerTurnWhenNotMyTurn(): void
+    {
+        $gameRepository = $this->createMock(GameRepository::class);
+        $manager = new GameManager($gameRepository);
+        $game = new Game();
+        $coords = new Coords(0, 0);
+        $team = GameManager::CROSS_TEAM;
+        $game->setCurrentPlayer(GameManager::CIRCLE_TEAM);
+        $expectedBoard = $manager->getEmptyBoard($game->getRows(), $game->getCols());
+        $game->setBoard($expectedBoard);
+
+        $turnDone = $manager->playPlayerTurn($coords, $game, $team);
+
+        $this->assertFalse($turnDone);
+        $this->assertEquals($expectedBoard, $game->getBoard());
+        $this->assertEquals(null, $game->getSelectedCube());
+    }
+
+    /**
+     * If it's my turn, and no cube selected, it should select a cube
+     *
+     * @return void
+     */
+    public function testPlayPlayerTurnWhenMyTurnAndNoCubeSelected(): void
+    {
+        $gameRepository = $this->createMock(GameRepository::class);
+        $manager = new GameManager($gameRepository);
+        $game = new Game();
+        $coords = new Coords(0, 0);
+        $team = GameManager::CROSS_TEAM;
+        $game->setCurrentPlayer(GameManager::CROSS_TEAM);
+        $expectedBoard = $manager->getEmptyBoard($game->getRows(), $game->getCols());
+        $game->setBoard($expectedBoard);
+
+        $turnDone = $manager->playPlayerTurn($coords, $game, $team);
+
+        $this->assertFalse($turnDone);
+        $this->assertEquals($expectedBoard, $game->getBoard());
+        $this->assertEquals(['x' => $coords->getX(), 'y' => $coords->getY()], $game->getSelectedCube());
+    }
+
+    /**
+     * If it's my turn, and a cube selected, it should change board and my turn should be done
+     *
+     * @return void
+     */
+    public function testPlayPlayerTurnWhenMyTurnAndACubeIsSelected(): void
+    {
+        $gameRepository = $this->createMock(GameRepository::class);
+        $manager = new GameManager($gameRepository);
+        $game = new Game();
+        $coordsSelectedCube = new Coords(0, 0);
+        $game->setSelectedCube([
+            'x' => $coordsSelectedCube->getX(),
+            'y' => $coordsSelectedCube->getY(),
+        ]);
+        $team = GameManager::CROSS_TEAM;
+        $game->setCurrentPlayer(GameManager::CROSS_TEAM);
+        $initBoard = [
+            [1, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0]
+        ];
+        $game->setBoard($initBoard);
+
+        $expectedBoard = [
+            [0, 0, 0, 0, 1],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0]
+        ];
+        $coordsDestination = new Coords(0, 4);
+        $turnDone = $manager->playPlayerTurn($coordsDestination, $game, $team);
+
+        $this->assertTrue($turnDone);
+        $this->assertEquals($expectedBoard, $game->getBoard());
+        $this->assertEquals(null, $game->getSelectedCube());
     }
 }
