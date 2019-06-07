@@ -40,6 +40,12 @@ class Game
     /** @ORM\Column(type="integer") */
     private $numberOfPlayers;
 
+    /** @ORM\Column(type="integer", nullable=true) */
+    private $player1;
+
+    /** @ORM\Column(type="integer", nullable=true) */
+    private $player2;
+
     /**
      * __construct
      *
@@ -245,6 +251,46 @@ class Game
     public function setNumberOfPlayers($numberOfPlayers)
     {
         $this->numberOfPlayers = $numberOfPlayers;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of player1
+     */
+    public function getPlayer1()
+    {
+        return $this->player1;
+    }
+
+    /**
+     * Set the value of player1
+     *
+     * @return  self
+     */
+    public function setPlayer1($player1)
+    {
+        $this->player1 = $player1;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of player2
+     */
+    public function getPlayer2()
+    {
+        return $this->player2;
+    }
+
+    /**
+     * Set the value of player2
+     *
+     * @return  self
+     */
+    public function setPlayer2($player2)
+    {
+        $this->player2 = $player2;
 
         return $this;
     }

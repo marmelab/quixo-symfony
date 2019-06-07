@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+    <div class="team-selection">
+        <h1>Choose your team:</h1>
+        {% for team in availablesTeams %}
+            <div class="cube cube-{{ team|getCubeSymbol }}">
+                <form
+                    class="form-cube"
+                    action="{{ url('assign-player', { id: game.id }) }}"
+                    method="post"
+                >
+                    <input type="hidden" name="token" value="{{ csrf_token('assign-team') }}" />
+                    <input type="hidden" name="team" value="{{ team }}" />
+                    <button class="cube-btn" type="submit"></button>
+                </form>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

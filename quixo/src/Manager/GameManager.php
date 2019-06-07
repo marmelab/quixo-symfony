@@ -545,4 +545,20 @@ class GameManager
         $game = $this->playCube($game, $coordsSelected, $playerTeam);
         return true;
     }
+
+    /**
+     * Return the availables team for a game
+     *
+     * @param  Game $game
+     *
+     * @return array
+     */
+    public function getAvailablesTeams(Game $game): array
+    {
+        return array_filter([self::CIRCLE_TEAM, self::CROSS_TEAM],
+            function($team) use ($game) {
+                return $game->getPlayer1() !== $team && $game->getPlayer2() !== $team;
+            }
+        );
+    }
 }

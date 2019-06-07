@@ -36,19 +36,27 @@ class GameController extends AbstractController
      *
      * @return RedirectResponse
      */
-    public function assignPlayer(Request $request, GameManager $gameManager, SessionManager $sessionManager): RedirectResponse
+    public function assignPlayer(Request $request, GameManager $gameManager, SessionManager $sessionManager, \Twig_Environment $twig): Response
     {
         $id = $request->attributes->getInt('id');
         $game = $gameManager->getGame($id);
-        $numberOfPlayers = $game->getNumberOfPlayers();
-        if ($numberOfPlayers === 0) {
-            $sessionManager->storePlayerTeam($game, GameManager::CROSS_TEAM);
-        } elseif ($numberOfPlayers === 1) {
-            $sessionManager->storePlayerTeam($game, GameManager::CIRCLE_TEAM);
-        } else {
-            return $this->redirectToRoute('newgame', ['id' => $id]);
+        $availablesTeams = $gameManager->getAvailablesTeams($game);
+        if (count($availablesTeams) < 1) {
+            return $this->redirectToRoute('newgame');
         }
-        return $this->redirectToRoute('game', ['id' => $id]);
+
+        if ($this->isCsrfTokenValid('assign-team', $request->request->get('token'))) {
+            $team = $request->request->getInt('team');
+            if (in_array($team, $availablesTeams)) {
+                $sessionManager->storePlayerTeam($game, $team);
+                return $this->redirectToRoute('game', ['id' => $id]);
+            }
+        }
+
+        return new Response($twig->render('choose-team.html.twig', [
+            'game' => $game,
+            'availablesTeams' => $availablesTeams,
+        ]));
     }
 
     /**

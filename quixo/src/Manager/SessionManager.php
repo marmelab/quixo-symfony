@@ -5,6 +5,7 @@ namespace App\Manager;
 use App\Entity\Game;
 use App\Repository\GameRepository;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\Config\Definition\Exception\Exception;
 
 class SessionManager
 {
@@ -50,7 +51,11 @@ class SessionManager
     public function storePlayerTeam(Game $game, int $team): void
     {
         $this->session->set(self::PREFIX_GAME . $game->getId(), strval($team));
-        $game->setNumberOfPlayers($game->getNumberOfPlayers() + 1);
+        if ($game->getPlayer1() === null) {
+            $game->setPlayer1($team);
+        } elseif ($game->getPlayer2() === null) {
+            $game->setPlayer2($team);
+        }
         $this->gameRepository->save($game);
     }
 }
