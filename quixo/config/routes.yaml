@@ -15,3 +15,7 @@ game:
 assign-player:
     path: /assign-player/{id}
     controller: App\Controller\GameController::assignPlayer
+
+spectate:
+    path: /spectate/{id}
+    controller: App\Controller\GameController::spectate

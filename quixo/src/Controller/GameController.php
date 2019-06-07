@@ -42,7 +42,7 @@ class GameController extends AbstractController
         $game = $gameManager->getGame($id);
         $availablesTeams = $gameManager->getAvailablesTeams($game);
         if (count($availablesTeams) < 1) {
-            return $this->redirectToRoute('newgame');
+            return $this->redirectToRoute('spectate', [ 'id' => $id ]);
         }
 
         if ($this->isCsrfTokenValid('assign-team', $request->request->get('token'))) {
@@ -100,6 +100,29 @@ class GameController extends AbstractController
             'winningCubes' => $winningCubes,
             'waitForPlayer' => $playerTeam !== $game->getCurrentPlayer() && $winner === null,
             'playerTeam' => $playerTeam,
+        ]));
+    }
+
+    /**
+     * Display neutral game for spectators
+     *
+     * @param  Request          $request
+     * @param  GameManager      $gameManager
+     * @param  Twig_Environment $twig
+     *
+     * @return Response
+     */
+    public function spectate(Request $request, GameManager $gameManager, \Twig_Environment $twig): Response
+    {
+        $game = $gameManager->getGame($request->attributes->getInt('id'));
+        list($winner, $winningCubes) = $gameManager->resolveWinnerAndWinningCubes($game);
+
+        return new Response($twig->render('game.html.twig', [
+            'game' => $game,
+            'winningCubes' => $winningCubes,
+            'waitForPlayer' => true,
+            'playerTeam' => 0,
+            'movables' => [],
         ]));
     }
 }
