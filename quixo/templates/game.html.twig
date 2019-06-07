@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 {% block refresh %}
-    {% if not isPlaying %}
+    {% if waitForPlayer %}
         <meta http-equiv="refresh" content="1" />
     {% endif %}
 {% endblock %}

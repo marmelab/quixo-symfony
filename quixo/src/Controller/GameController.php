@@ -5,6 +5,7 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use App\Repository\GameRepository;
 use App\Entity\Coords;
 use App\Manager\GameManager;
@@ -17,16 +18,25 @@ class GameController extends AbstractController
      *
      * @param GameRepository   $gameRepository
      *
-     * @return Response
+     * @return RedirectResponse
      */
-    public function newGame(GameManager $gameManager): Response
+    public function newGame(GameManager $gameManager): RedirectResponse
     {
         $game = $gameManager->createGame();
 
         return $this->redirectToRoute('assign-player', ['id' => $game->getId()]);
     }
 
-    public function assignPlayer(Request $request, GameManager $gameManager, SessionManager $sessionManager): Response
+    /**
+     * Assign a team to a new player. If game already has 2 players, redirect to a new game
+     *
+     * @param  Request        $request
+     * @param  GameManager    $gameManager
+     * @param  SessionManager $sessionManager
+     *
+     * @return RedirectResponse
+     */
+    public function assignPlayer(Request $request, GameManager $gameManager, SessionManager $sessionManager): RedirectResponse
     {
         $id = $request->attributes->getInt('id');
         $game = $gameManager->getGame($id);
@@ -59,32 +69,27 @@ class GameController extends AbstractController
             return $this->redirectToRoute('assign-player', ['id' => $game->getId()]);
         }
 
-        $submittedToken = $request->request->get('token');
-        if ($this->isCsrfTokenValid('move-cube', $submittedToken) && $playerTeam === $game->getCurrentPlayer()) {
-            $coordsSelected = new Coords(
-                $request->request->getInt('x'),
-                $request->request->getInt('y')
-            );
-            if ($game->getSelectedCube() === null) {
-                $game = $gameManager->selectCube($game, $coordsSelected);
-            } else {
-                $game = $gameManager->playCube($game, $coordsSelected, $playerTeam);
-                $gameManager->switchPlayer($game);
-            }
+        $turnDone = false;
+
+        if ($this->isCsrfTokenValid('move-cube', $request->request->get('token'))) {
+            $turnDone = $gameManager->playPlayerTurn($request, $game, $playerTeam);
         }
 
         list($winner, $winningCubes) = $gameManager->resolveWinnerAndWinningCubes($game);
         if ($winner !== $game->getWinner()) {
             $gameManager->persistWinner($game, $winner);
         }
+        if ($turnDone) {
+            $gameManager->switchPlayer($game);
+        }
 
-        $movables = $gameManager->getMovablesForPlayer($game, $playerTeam);
+        $movables = $gameManager->getMovablesOrDestinationsForPlayer($game, $playerTeam);
 
         return new Response($twig->render('game.html.twig', [
             'game' => $game,
             'movables' => $movables,
             'winningCubes' => $winningCubes,
-            'isPlaying' => $playerTeam === $game->getCurrentPlayer(),
+            'waitForPlayer' => $playerTeam !== $game->getCurrentPlayer() && $winner === null,
         ]));
     }
 }
