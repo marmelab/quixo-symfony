@@ -8,35 +8,8 @@
     <div class="action-buttons">
         <a class="btn" href="{{ path('newgame') }}">New game</a>
     </div>
-    <div class="game-message">
-        {% if game.winner %}
-            {{ game.winner|getPlayerName }} has won the game !
-        {% else %}
-            {% if not waitForPlayer %}
-                It's your turn !
-            {% else %}
-                Waiting for {{ game.currentPlayer|getPlayerName }}
-            {% endif %}
-        {% endif %}
-        <div class="reminder-team">
-            You're playing with:
-            <div class="cube cube-{{ playerTeam|getCubeSymbol }} example-cube">
-        </div>
-    </div>
-    </div>
-
+    {% include 'instructions.html.twig' %}
 {% endblock %}
 {% block content %}
-    <table class="board">
-        {% for line in game.board|default([]) %}
-            <tr>
-            {% set x = loop.index0 %}
-            {% for cube in line|default([]) %}
-                {% set y = loop.index0 %}
-                <td>{% include 'cube.html.twig' with { x:x, y:y } %}</td>
-            {% endfor %}
-            </tr>
-        {% endfor %}
-    </table>
-    <br />
+    {% include 'board.html.twig' %}
 {% endblock %}

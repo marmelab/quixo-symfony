@@ -80,7 +80,7 @@ class GameController extends AbstractController
         if ($winner !== $game->getWinner()) {
             $gameManager->persistWinner($game, $winner);
         }
-        if ($turnDone) {
+        if ($turnDone && $winner === null) {
             $gameManager->switchPlayer($game);
         }
 
