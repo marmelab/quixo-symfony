@@ -8,23 +8,8 @@
     <div class="action-buttons">
         <a class="btn" href="{{ path('newgame') }}">New game</a>
     </div>
-    {% if game.winner %}
-        <div class="winner">
-            {{ game.winner|getPlayerName }} has won the game !
-        </div>
-    {% endif %}
+    {% include 'instructions.html.twig' %}
 {% endblock %}
 {% block content %}
-    <table class="board">
-        {% for line in game.board|default([]) %}
-            <tr>
-            {% set x = loop.index0 %}
-            {% for cube in line|default([]) %}
-                {% set y = loop.index0 %}
-                <td>{% include 'cube.html.twig' with { x:x, y:y } %}</td>
-            {% endfor %}
-            </tr>
-        {% endfor %}
-    </table>
-    <br />
+    {% include 'board.html.twig' %}
 {% endblock %}

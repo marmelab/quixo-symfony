@@ -6,6 +6,7 @@ namespace App\Twig;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use App\Manager\GameManager;
+use App\Entity\Game;
 
 class AppExtension extends AbstractExtension
 {
@@ -21,6 +22,7 @@ class AppExtension extends AbstractExtension
             new TwigFilter('isCoordsInCubeArray', [$this, 'isCoordsInCubeArray']),
             new TwigFilter('isCoordsInCoordsArray', [$this, 'isCoordsInCoordsArray']),
             new TwigFilter('getPlayerName', [$this, 'getPlayerName']),
+            new TwigFilter('getGameMessage', [$this, 'getGameMessage']),
         ];
     }
 
@@ -88,8 +90,18 @@ class AppExtension extends AbstractExtension
      *
      * @return string
      */
-    public function getPlayerName($value): string
+    public function getPlayerName(int $value): string
     {
         return $value === 1 ? 'Player 1' : 'Player 2';
+    }
+
+    public function getGameMessage(Game $game, bool $waitForPlayer): string
+    {
+        if ($game->getWinner() !== null) {
+            return $this->getPlayerName($game->getWinner()) . ' has won the game !';
+        }
+        return $waitForPlayer
+            ? 'Waiting for ' . $this->getPlayerName($game->getCurrentPlayer())
+            : "It's your turn !";
     }
 }

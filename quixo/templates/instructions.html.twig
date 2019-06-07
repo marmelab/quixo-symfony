@@ -1,0 +1,7 @@
+<div class="game-message">
+    {{ game|getGameMessage(waitForPlayer)}}
+    <div class="reminder-team">
+        You're playing with:
+        <div class="cube cube-{{ playerTeam|getCubeSymbol }} example-cube">
+    </div>
+</div>

@@ -1,0 +1,11 @@
+<table class="board">
+    {% for line in game.board|default([]) %}
+        <tr>
+        {% set x = loop.index0 %}
+        {% for cube in line|default([]) %}
+            {% set y = loop.index0 %}
+            <td>{% include 'cube.html.twig' with { x:x, y:y } %}</td>
+        {% endfor %}
+        </tr>
+    {% endfor %}
+</table>

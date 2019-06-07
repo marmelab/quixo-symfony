@@ -1,7 +1,7 @@
 .board {
     margin-left:auto;
     margin-right:auto;
-    padding-top: 5%;
+    padding-top: 2rem;
 }
 
 .cube {
@@ -56,15 +56,22 @@
     padding: 10px 10px;
 }
 
-.winner {
+.game-message {
     font-size: 3em;
     text-align: center;
 }
 
-.action-buttons {
-    position: fixed;
-}
-
 .selected-cube {
     background-color: cyan;
+}
+
+.example-cube {
+    width: 25px;
+    height: 25px;
+    background-size: 25px;
+    vertical-align: middle;
+}
+
+.reminder-team {
+    font-size: 2rem;
 }
