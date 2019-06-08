@@ -1,7 +1,7 @@
 <div class="game-message">
     {{ game|getGameMessage(waitForPlayer)}}
     <div class="reminder-team">
-    {% if playerTeam == 0 %}
+    {% if playerTeam == constant('App\\Manager\\GameManager::NEUTRAL_VALUE') %}
         You're a spectator
     {% else %}
         You're playing with:

@@ -3,18 +3,35 @@
 {% block content %}
     <div class="team-selection">
         <h1>Choose your team:</h1>
-        {% for team in availablesTeams %}
-            <div class="cube cube-{{ team|getCubeSymbol }}">
-                <form
-                    class="form-cube"
-                    action="{{ url('assign-player', { id: game.id }) }}"
-                    method="post"
-                >
-                    <input type="hidden" name="token" value="{{ csrf_token('assign-team') }}" />
-                    <input type="hidden" name="team" value="{{ team }}" />
-                    <button class="cube-btn" type="submit"></button>
-                </form>
+        {{ form_start(form, {'attr': {'id': 'form-team'}} ) }}
+            <div class="team-choices">
+                {{ form_row(form.team.children[0], {
+                    'label_attr': { 'class': 'cube-cross label-choose-team' },
+                }) }}
+                {{ form_row(form.team.children[1], {
+                    'label_attr': { 'class': 'cube-circle label-choose-team' },
+                }) }}
             </div>
-        {% endfor %}
+        {{ form_end(form) }}
     </div>
+{% endblock %}
+
+{% block javascript %}
+    <script>
+
+        /*
+         * Listen to the radio change to submit the form
+         * Listening to label click will return a null forn
+         */
+        function submitFormOnClick() {
+            radiosButtons = document.querySelectorAll("input[type=radio]");
+            Array.prototype.map.call(radiosButtons, function(radioButton) {
+                radioButton.addEventListener('change', function () {
+                    document.getElementById('form-team').submit();
+                });
+            });
+        }
+
+        window.onload = submitFormOnClick;
+    </script>
 {% endblock %}

@@ -10,6 +10,9 @@ use App\Repository\GameRepository;
 use App\Entity\Coords;
 use App\Manager\GameManager;
 use App\Manager\SessionManager;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use App\Form\TeamType;
 
 class GameController extends AbstractController
 {
@@ -40,22 +43,28 @@ class GameController extends AbstractController
     {
         $id = $request->attributes->getInt('id');
         $game = $gameManager->getGame($id);
+
         $availablesTeams = $gameManager->getAvailablesTeams($game);
         if (count($availablesTeams) < 1) {
             return $this->redirectToRoute('spectate', [ 'id' => $id ]);
+        } elseif (count($availablesTeams) === 1) {
+            $sessionManager->storePlayerTeam($game, array_pop($availablesTeams));
+            return $this->redirectToRoute('game', ['id' => $id]);
         }
 
-        if ($this->isCsrfTokenValid('assign-team', $request->request->get('token'))) {
-            $team = $request->request->getInt('team');
-            if (in_array($team, $availablesTeams)) {
-                $sessionManager->storePlayerTeam($game, $team);
-                return $this->redirectToRoute('game', ['id' => $id]);
-            }
+        $form = $this->createForm(TeamType::class);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $selectedTeam = $form->getData()['team'];
+            $sessionManager->storePlayerTeam($game, $selectedTeam);
+            return $this->redirectToRoute('game', ['id' => $id]);
         }
 
         return new Response($twig->render('choose-team.html.twig', [
             'game' => $game,
             'availablesTeams' => $availablesTeams,
+            'form' => $form->createView(),
         ]));
     }
 
