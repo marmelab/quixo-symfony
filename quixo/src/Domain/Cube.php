@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Entity;
+namespace App\Domain;
 
-use App\Entity\Coords;
+use App\Domain\Coords;
 use App\Manager\GameManager;
 
 class Cube

@@ -37,8 +37,11 @@ class Game
     /** @ORM\Column(type="json", nullable=true) */
     private $selectedCube;
 
-    /** @ORM\Column(type="integer") */
-    private $numberOfPlayers;
+    /** @ORM\Column(type="integer", nullable=true) */
+    private $player1;
+
+    /** @ORM\Column(type="integer", nullable=true) */
+    private $player2;
 
     /**
      * __construct
@@ -52,7 +55,6 @@ class Game
         $this->rows = $rows;
         $this->cols = $cols;
         $this->currentPlayer = GameManager::CROSS_TEAM;
-        $this->numberOfPlayers = 0;
     }
 
     /**
@@ -230,21 +232,41 @@ class Game
     }
 
     /**
-     * Get the value of numberOfPlayers
+     * Get the value of player1
      */
-    public function getNumberOfPlayers()
+    public function getPlayer1()
     {
-        return $this->numberOfPlayers;
+        return $this->player1;
     }
 
     /**
-     * Set the value of numberOfPlayers
+     * Set the value of player1
      *
      * @return  self
      */
-    public function setNumberOfPlayers($numberOfPlayers)
+    public function setPlayer1($player1)
     {
-        $this->numberOfPlayers = $numberOfPlayers;
+        $this->player1 = $player1;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of player2
+     */
+    public function getPlayer2()
+    {
+        return $this->player2;
+    }
+
+    /**
+     * Set the value of player2
+     *
+     * @return  self
+     */
+    public function setPlayer2($player2)
+    {
+        $this->player2 = $player2;
 
         return $this;
     }

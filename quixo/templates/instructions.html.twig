@@ -1,7 +1,11 @@
 <div class="game-message">
     {{ game|getGameMessage(waitForPlayer)}}
     <div class="reminder-team">
+    {% if playerTeam == constant('App\\Manager\\GameManager::NEUTRAL_VALUE') %}
+        You're a spectator
+    {% else %}
         You're playing with:
         <div class="cube cube-{{ playerTeam|getCubeSymbol }} example-cube">
+    {% endif %}
     </div>
 </div>

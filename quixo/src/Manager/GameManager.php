@@ -2,11 +2,11 @@
 
 namespace App\Manager;
 
-use App\Entity\Coords;
-use App\Entity\Cube;
-use App\Repository\GameRepository;
+use App\Domain\Coords;
+use App\Domain\Cube;
 use App\Entity\Game;
-use Symfony\Component\HttpFoundation\Request;
+use App\Repository\GameRepository;
+use App\Domain\TeamSelection;
 
 class GameManager
 {
@@ -544,5 +544,21 @@ class GameManager
         }
         $game = $this->playCube($game, $coordsSelected, $playerTeam);
         return true;
+    }
+
+    /**
+     * Return the availables team for a game
+     *
+     * @param  Game $game
+     *
+     * @return array
+     */
+    public function getAvailablesTeams(Game $game): array
+    {
+        return array_filter([new TeamSelection(self::CIRCLE_TEAM), new TeamSelection(self::CROSS_TEAM)],
+            function($team) use ($game) {
+                return $game->getPlayer1() !== $team->getTeam() && $game->getPlayer2() !== $team->getTeam();
+            }
+        );
     }
 }

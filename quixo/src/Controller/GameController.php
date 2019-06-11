@@ -7,9 +7,11 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use App\Repository\GameRepository;
-use App\Entity\Coords;
+use App\Domain\Coords;
+use App\Domain\TeamSelection;
 use App\Manager\GameManager;
 use App\Manager\SessionManager;
+use App\Form\TeamType;
 
 class GameController extends AbstractController
 {
@@ -36,31 +38,45 @@ class GameController extends AbstractController
      *
      * @return RedirectResponse
      */
-    public function assignPlayer(Request $request, GameManager $gameManager, SessionManager $sessionManager): RedirectResponse
+    public function assignPlayer(Request $request, GameManager $gameManager, SessionManager $sessionManager): Response
     {
         $id = $request->attributes->getInt('id');
         $game = $gameManager->getGame($id);
-        $numberOfPlayers = $game->getNumberOfPlayers();
-        if ($numberOfPlayers === 0) {
-            $sessionManager->storePlayerTeam($game, GameManager::CROSS_TEAM);
-        } elseif ($numberOfPlayers === 1) {
-            $sessionManager->storePlayerTeam($game, GameManager::CIRCLE_TEAM);
-        } else {
-            return $this->redirectToRoute('newgame', ['id' => $id]);
+
+        $availablesTeams = $gameManager->getAvailablesTeams($game);
+        if (count($availablesTeams) < 1) {
+            return $this->redirectToRoute('spectate', [ 'id' => $id ]);
+        } elseif (count($availablesTeams) === 1) {
+            $sessionManager->storePlayerTeam($game, array_pop($availablesTeams));
+            return $this->redirectToRoute('game', ['id' => $id]);
         }
-        return $this->redirectToRoute('game', ['id' => $id]);
+
+        $teamSelection = new TeamSelection();
+        $form = $this->createForm(TeamType::class, $teamSelection);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $teamSelection = $form->getData();
+            $sessionManager->storePlayerTeam($game, $teamSelection);
+            return $this->redirectToRoute('game', ['id' => $id]);
+        }
+
+        return $this->render('choose-team.html.twig', [
+            'game' => $game,
+            'availablesTeams' => $availablesTeams,
+            'form' => $form->createView(),
+        ]);
     }
 
     /**
      * Display the game for players
      *
-     * @param  Twig_Environment $twig
      * @param  GameManager      $gameManager
      * @param  CookieManager    $cookieManager
      *
      * @return Response
      */
-    public function game(Request $request, \Twig_Environment $twig, GameManager $gameManager, SessionManager $sessionManager): Response
+    public function game(Request $request, GameManager $gameManager, SessionManager $sessionManager): Response
     {
         $game = $gameManager->getGame($request->attributes->getInt('id'));
         $playerTeam = $sessionManager->getPlayerTeam($game);
@@ -86,12 +102,35 @@ class GameController extends AbstractController
 
         $movables = $gameManager->getMovablesOrDestinationsForPlayer($game, $playerTeam);
 
-        return new Response($twig->render('game.html.twig', [
+        return $this->render('game.html.twig', [
             'game' => $game,
             'movables' => $movables,
             'winningCubes' => $winningCubes,
             'waitForPlayer' => $playerTeam !== $game->getCurrentPlayer() && $winner === null,
             'playerTeam' => $playerTeam,
-        ]));
+        ]);
+    }
+
+    /**
+     * Display neutral game for spectators
+     *
+     * @param  Request          $request
+     * @param  GameManager      $gameManager
+     * @param  Twig_Environment $twig
+     *
+     * @return Response
+     */
+    public function spectate(Request $request, GameManager $gameManager): Response
+    {
+        $game = $gameManager->getGame($request->attributes->getInt('id'));
+        list($winner, $winningCubes) = $gameManager->resolveWinnerAndWinningCubes($game);
+
+        return $this->render('game.html.twig', [
+            'game' => $game,
+            'winningCubes' => $winningCubes,
+            'waitForPlayer' => $winner === null,
+            'playerTeam' => 0,
+            'movables' => [],
+        ]);
     }
 }

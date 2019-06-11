@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+    <div class="team-selection">
+        <h1>Choose your team:</h1>
+        {{ form_start(form, {'attr': {'id': 'form-team'}} ) }}
+            <div class="team-choices">
+                {{ form_row(form.team.children[0], {
+                    'label_attr': { 'class': 'cube-cross label-choose-team' },
+                }) }}
+                {{ form_row(form.team.children[1], {
+                    'label_attr': { 'class': 'cube-circle label-choose-team' },
+                }) }}
+            </div>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    <script>
+
+        /*
+         * Listen to the radio change to submit the form
+         * Listening to label click will return a null forn
+         */
+        function submitFormOnClick() {
+            radiosButtons = document.querySelectorAll("input[type=radio]");
+            Array.from(radiosButtons).forEach(function(radioButton) {
+                radioButton.addEventListener('change', function () {
+                    document.getElementById('form-team').submit();
+                });
+            });
+        }
+
+        window.onload = submitFormOnClick;
+    </script>
+{% endblock %}

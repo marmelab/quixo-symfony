@@ -5,6 +5,7 @@ namespace App\Manager;
 use App\Entity\Game;
 use App\Repository\GameRepository;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use App\Domain\TeamSelection;
 
 class SessionManager
 {
@@ -36,21 +37,26 @@ class SessionManager
      */
     public function getPlayerTeam(Game $game): int
     {
-        return (int)$this->session->get(self::PREFIX_GAME . $game->getId(), 0);
+        return (int) $this->session->get(self::PREFIX_GAME . $game->getId(), 0);
     }
 
     /**
      * Set the team of the player for the game id in the session and update Game
      *
-     * @param  Game $game
-     * @param  int  $team
+     * @param  Game           $game
+     * @param  TeamSelection  $team
      *
      * @return void
      */
-    public function storePlayerTeam(Game $game, int $team): void
+    public function storePlayerTeam(Game $game, TeamSelection $teamSelection): void
     {
+        $team = $teamSelection->getTeam();
         $this->session->set(self::PREFIX_GAME . $game->getId(), strval($team));
-        $game->setNumberOfPlayers($game->getNumberOfPlayers() + 1);
+        if ($game->getPlayer1() === null) {
+            $game->setPlayer1($team);
+        } elseif ($game->getPlayer2() === null) {
+            $game->setPlayer2($team);
+        }
         $this->gameRepository->save($game);
     }
 }
