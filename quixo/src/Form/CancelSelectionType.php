@@ -11,6 +11,6 @@ class CancelSelectionType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('cancel-selection', SubmitType::class);
+            ->add('cancel', SubmitType::class);
     }
 }
