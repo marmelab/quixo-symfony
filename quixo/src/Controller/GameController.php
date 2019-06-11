@@ -51,7 +51,7 @@ class GameController extends AbstractController
             return $this->redirectToRoute('game', ['id' => $id]);
         }
 
-        $teamSelection = new teamSelection();
+        $teamSelection = new TeamSelection();
         $form = $this->createForm(TeamType::class, $teamSelection);
 
         $form->handleRequest($request);
