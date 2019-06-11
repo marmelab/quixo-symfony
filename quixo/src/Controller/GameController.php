@@ -10,8 +10,6 @@ use App\Repository\GameRepository;
 use App\Entity\Coords;
 use App\Manager\GameManager;
 use App\Manager\SessionManager;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use App\Form\TeamType;
 
 class GameController extends AbstractController
@@ -39,7 +37,7 @@ class GameController extends AbstractController
      *
      * @return RedirectResponse
      */
-    public function assignPlayer(Request $request, GameManager $gameManager, SessionManager $sessionManager, \Twig_Environment $twig): Response
+    public function assignPlayer(Request $request, GameManager $gameManager, SessionManager $sessionManager): Response
     {
         $id = $request->attributes->getInt('id');
         $game = $gameManager->getGame($id);
@@ -61,23 +59,22 @@ class GameController extends AbstractController
             return $this->redirectToRoute('game', ['id' => $id]);
         }
 
-        return new Response($twig->render('choose-team.html.twig', [
+        return $this->render('choose-team.html.twig', [
             'game' => $game,
             'availablesTeams' => $availablesTeams,
             'form' => $form->createView(),
-        ]));
+        ]);
     }
 
     /**
      * Display the game for players
      *
-     * @param  Twig_Environment $twig
      * @param  GameManager      $gameManager
      * @param  CookieManager    $cookieManager
      *
      * @return Response
      */
-    public function game(Request $request, \Twig_Environment $twig, GameManager $gameManager, SessionManager $sessionManager): Response
+    public function game(Request $request, GameManager $gameManager, SessionManager $sessionManager): Response
     {
         $game = $gameManager->getGame($request->attributes->getInt('id'));
         $playerTeam = $sessionManager->getPlayerTeam($game);
@@ -103,13 +100,13 @@ class GameController extends AbstractController
 
         $movables = $gameManager->getMovablesOrDestinationsForPlayer($game, $playerTeam);
 
-        return new Response($twig->render('game.html.twig', [
+        return $this->render('game.html.twig', [
             'game' => $game,
             'movables' => $movables,
             'winningCubes' => $winningCubes,
             'waitForPlayer' => $playerTeam !== $game->getCurrentPlayer() && $winner === null,
             'playerTeam' => $playerTeam,
-        ]));
+        ]);
     }
 
     /**
@@ -121,17 +118,17 @@ class GameController extends AbstractController
      *
      * @return Response
      */
-    public function spectate(Request $request, GameManager $gameManager, \Twig_Environment $twig): Response
+    public function spectate(Request $request, GameManager $gameManager): Response
     {
         $game = $gameManager->getGame($request->attributes->getInt('id'));
         list($winner, $winningCubes) = $gameManager->resolveWinnerAndWinningCubes($game);
 
-        return new Response($twig->render('game.html.twig', [
+        return $this->render('game.html.twig', [
             'game' => $game,
             'winningCubes' => $winningCubes,
             'waitForPlayer' => $winner === null,
             'playerTeam' => 0,
             'movables' => [],
-        ]));
+        ]);
     }
 }
