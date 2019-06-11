@@ -25,7 +25,7 @@
          */
         function submitFormOnClick() {
             radiosButtons = document.querySelectorAll("input[type=radio]");
-            Array.prototype.map.call(radiosButtons, function(radioButton) {
+            Array.from(radiosButtons).forEach(function(radioButton) {
                 radioButton.addEventListener('change', function () {
                     document.getElementById('form-team').submit();
                 });
