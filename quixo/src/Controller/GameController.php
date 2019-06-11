@@ -11,6 +11,7 @@ use App\Entity\Coords;
 use App\Manager\GameManager;
 use App\Manager\SessionManager;
 use App\Form\TeamType;
+use App\Entity\User;
 
 class GameController extends AbstractController
 {
@@ -50,12 +51,13 @@ class GameController extends AbstractController
             return $this->redirectToRoute('game', ['id' => $id]);
         }
 
-        $form = $this->createForm(TeamType::class);
+        $user = new User();
+        $form = $this->createForm(TeamType::class, $user);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $selectedTeam = $form->getData()['team'];
-            $sessionManager->storePlayerTeam($game, $selectedTeam);
+            $user = $form->getData();
+            $sessionManager->storePlayerTeam($game, $user->getTeam());
             return $this->redirectToRoute('game', ['id' => $id]);
         }
 
