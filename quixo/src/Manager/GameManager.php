@@ -6,6 +6,7 @@ use App\Domain\Coords;
 use App\Domain\Cube;
 use App\Entity\Game;
 use App\Repository\GameRepository;
+use App\Domain\TeamSelection;
 
 class GameManager
 {
@@ -554,9 +555,9 @@ class GameManager
      */
     public function getAvailablesTeams(Game $game): array
     {
-        return array_filter([self::CIRCLE_TEAM, self::CROSS_TEAM],
+        return array_filter([new TeamSelection(self::CIRCLE_TEAM), new TeamSelection(self::CROSS_TEAM)],
             function($team) use ($game) {
-                return $game->getPlayer1() !== $team && $game->getPlayer2() !== $team;
+                return $game->getPlayer1() !== $team->getTeam() && $game->getPlayer2() !== $team->getTeam();
             }
         );
     }
