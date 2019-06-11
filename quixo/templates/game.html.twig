@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 {% block refresh %}
-    {% if waitForPlayer|default %}
+    {% if waitForPlayer %}
         <meta http-equiv="refresh" content="1" />
     {% endif %}
 {% endblock %}
@@ -10,7 +10,7 @@
 {% endblock %}
 {% block content %}
     {% include 'board.html.twig' %}
-    {% if cancelForm %}
+    {% if cancelForm is defined and cancelForm %}
         <div class="cancel-selection">
             {{ form_start(cancelForm)}}
             {{ form_row(cancelForm.cancel, { attr: { class: 'btn btn-cancel' }}) }}
