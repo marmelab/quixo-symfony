@@ -20,3 +20,8 @@ assign-player:
 spectate:
     path: /spectate/{id}
     controller: App\Controller\GameController::spectate
+
+cancel-selection:
+    path: /cancel-selection/{id}
+    controller: App\Controller\GameController::cancelSelection
+    methods: POST

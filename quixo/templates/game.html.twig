@@ -10,4 +10,9 @@
 {% endblock %}
 {% block content %}
     {% include 'board.html.twig' %}
+    {% if cancelForm %}
+        <div class="cancel-selection">
+            {{ form(cancelForm) }}
+        </div>
+    {% endif %}
 {% endblock %}
