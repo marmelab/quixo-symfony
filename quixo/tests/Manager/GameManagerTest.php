@@ -5,8 +5,7 @@ use PHPUnit\Framework\TestCase;
 use App\Manager\GameManager;
 use App\Repository\GameRepository;
 use App\Entity\Game;
-use App\Entity\Coords;
-use Symfony\Component\HttpFoundation\Request;
+use App\Domain\Coords;
 
 class GameManagerTest extends TestCase
 {

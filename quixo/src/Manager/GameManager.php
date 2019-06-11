@@ -2,11 +2,10 @@
 
 namespace App\Manager;
 
-use App\Entity\Coords;
-use App\Entity\Cube;
-use App\Repository\GameRepository;
+use App\Domain\Coords;
+use App\Domain\Cube;
 use App\Entity\Game;
-use Symfony\Component\HttpFoundation\Request;
+use App\Repository\GameRepository;
 
 class GameManager
 {

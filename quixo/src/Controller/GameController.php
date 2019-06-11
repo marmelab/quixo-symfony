@@ -7,11 +7,11 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use App\Repository\GameRepository;
-use App\Entity\Coords;
+use App\Domain\Coords;
+use App\Domain\TeamSelection;
 use App\Manager\GameManager;
 use App\Manager\SessionManager;
 use App\Form\TeamType;
-use App\Entity\User;
 
 class GameController extends AbstractController
 {
@@ -51,13 +51,13 @@ class GameController extends AbstractController
             return $this->redirectToRoute('game', ['id' => $id]);
         }
 
-        $user = new User();
-        $form = $this->createForm(TeamType::class, $user);
+        $teamSelection = new teamSelection();
+        $form = $this->createForm(TeamType::class, $teamSelection);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $user = $form->getData();
-            $sessionManager->storePlayerTeam($game, $user->getTeam());
+            $teamSelection = $form->getData();
+            $sessionManager->storePlayerTeam($game, $teamSelection);
             return $this->redirectToRoute('game', ['id' => $id]);
         }
 

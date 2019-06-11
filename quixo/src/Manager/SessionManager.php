@@ -5,7 +5,7 @@ namespace App\Manager;
 use App\Entity\Game;
 use App\Repository\GameRepository;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
-use Symfony\Component\Config\Definition\Exception\Exception;
+use App\Domain\TeamSelection;
 
 class SessionManager
 {
@@ -43,13 +43,14 @@ class SessionManager
     /**
      * Set the team of the player for the game id in the session and update Game
      *
-     * @param  Game $game
-     * @param  int  $team
+     * @param  Game           $game
+     * @param  TeamSelection  $team
      *
      * @return void
      */
-    public function storePlayerTeam(Game $game, int $team): void
+    public function storePlayerTeam(Game $game, TeamSelection $teamSelection): void
     {
+        $team = $teamSelection->getTeam();
         $this->session->set(self::PREFIX_GAME . $game->getId(), strval($team));
         if ($game->getPlayer1() === null) {
             $game->setPlayer1($team);

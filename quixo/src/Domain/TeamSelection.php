@@ -1,10 +1,17 @@
 <?php
 
-namespace App\Entity;
+namespace App\Domain;
 
-class User
+use App\Manager\GameManager;
+
+class TeamSelection
 {
     private $team;
+
+    public function __construct(int $team = GameManager::NEUTRAL_VALUE)
+    {
+        $this->team = $team;
+    }
 
     /**
      * Get the value of team
