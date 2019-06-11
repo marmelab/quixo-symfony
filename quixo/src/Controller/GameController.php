@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -12,6 +13,7 @@ use App\Domain\TeamSelection;
 use App\Manager\GameManager;
 use App\Manager\SessionManager;
 use App\Form\TeamType;
+use App\Form\CancelSelectionType;
 
 class GameController extends AbstractController
 {
@@ -100,6 +102,11 @@ class GameController extends AbstractController
             $gameManager->switchPlayer($game);
         }
 
+        $cancelForm = $this->createForm(CancelSelectionType::class, null, [
+            'action' => $this->generateUrl('cancel-selection', ['id' => $game->getId()])
+        ]);
+        $displayCancelForm = $game->getSelectedCube() !== null && $game->getCurrentPlayer() === $playerTeam;
+
         $movables = $gameManager->getMovablesOrDestinationsForPlayer($game, $playerTeam);
 
         return $this->render('game.html.twig', [
@@ -108,6 +115,7 @@ class GameController extends AbstractController
             'winningCubes' => $winningCubes,
             'waitForPlayer' => $playerTeam !== $game->getCurrentPlayer() && $winner === null,
             'playerTeam' => $playerTeam,
+            'cancelForm' => $displayCancelForm ? $cancelForm->createView() : null,
         ]);
     }
 
@@ -132,5 +140,26 @@ class GameController extends AbstractController
             'playerTeam' => 0,
             'movables' => [],
         ]);
+    }
+
+    /**
+     * Cancel the player selection
+     *
+     * @param  Request     $request
+     * @param  GameManager $gameManager
+     *
+     * @return RedirectResponse
+     */
+    public function cancelSelection(Request $request, GameManager $gameManager): RedirectResponse
+    {
+        $id = $request->attributes->getInt('id');
+        $game = $gameManager->getGame($id);
+
+        $form = $this->createForm(CancelSelectionType::class);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $gameManager->cancelSelection($game);
+        }
+        return $this->redirectToRoute('game', ['id' => $id]);
     }
 }

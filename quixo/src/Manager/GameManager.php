@@ -561,4 +561,10 @@ class GameManager
             }
         );
     }
+
+    public function cancelSelection(Game $game): void
+    {
+        $game->setSelectedCube(null);
+        $this->gameRepository->save($game);
+    }
 }

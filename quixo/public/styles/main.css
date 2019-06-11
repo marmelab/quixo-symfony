@@ -34,6 +34,10 @@
     font-size: 16px;
 }
 
+.btn-cancel {
+    background-color: #FF0000;
+}
+
 .form-cube {
     width: 100%;
     height: 100%;
@@ -57,7 +61,7 @@
 }
 
 .selected-cube {
-    background-color: cyan;
+    border: none;
 }
 
 .example-cube {
@@ -112,4 +116,8 @@
 
 button {
     cursor: pointer;
+}
+
+.cancel-selection {
+    text-align: center;
 }
