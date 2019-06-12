@@ -30,13 +30,11 @@ services:
     expose:
       - "5432"
   advisor:
-    image: golang:1.12.5
+    build: docker/go
     volumes:
-      - ./advisor-go:/advisor-go
-      - /docker/go/bin:/go/bin
-    working_dir: /advisor-go
+      - ./advisor-go/src:/go/src
     ports:
       - "8001:8001"
     expose:
-        - "8001"
-    command: CompileDaemon -command="./advisor-go"
+      - "8001"
+    command: CompileDaemon -directory="./src/quixo/" -command="./src/quixo/quixo"

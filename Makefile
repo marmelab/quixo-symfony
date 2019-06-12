@@ -17,14 +17,9 @@ init-db: ## Create and setup the database
 	docker-compose run --rm \
 		php bash -ci './bin/console doctrine:database:create --if-not-exists && ./bin/console doctrine:schema:update --force'
 
-go-install:
-	docker-compose run --no-deps --rm \
-		advisor go get -u -v github.com/githubnemo/CompileDaemon
-
 install:
 	$(MAKE) composer-install
 	$(MAKE) init-db
-	$(MAKE) go-install
 
 update: composer-update ## Update docker environnement
 
