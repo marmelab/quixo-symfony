@@ -111,7 +111,7 @@ func isPlayerCube(cubeValue int, playerValue int) bool {
 	return cubeValue == 0 || cubeValue == playerValue
 }
 
-// Shift all value from xEnd to xStart in one row
+// Shift all values from xEnd to xStart in one row
 func shiftLine(grid [][]int, xStart int, xEnd int, rowIndex int, player int) [][]int {
 	newGrid := grid
 	step := 1
