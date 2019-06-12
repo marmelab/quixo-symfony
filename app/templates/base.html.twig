@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block pageTitle %}Quixo-Symfo online!{% endblock %}</title>
+        {% block stylesheets %}
+            <link rel="stylesheet" href="{{ asset('styles/main.css') }}"/>
+        {% endblock %}
+        {% block refresh '' %}
+    </head>
+    <body>
+        <div class="header">
+            {% block header %}
+                <div class="action-buttons">
+                    <a class="btn" href="{{ path('newgame') }}">New game</a>
+                </div>
+            {% endblock %}
+        </div>
+        <div class="container">
+            {% block content '' %}
+        </div>
+    </body>
+    {% block javascript '' %}
+</html>

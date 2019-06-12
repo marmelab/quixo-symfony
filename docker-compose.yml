@@ -6,7 +6,7 @@ services:
     ports:
       - 9000:9000
     volumes:
-      - ./quixo:/quixo
+      - ./app:/app
     depends_on:
       - postgres
   nginx:
@@ -14,7 +14,7 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ./quixo:/quixo
+      - ./app:/app
       - ./docker/nginx/site.conf:/etc/nginx/conf.d/default.conf
       - ./logs:/var/log/nginx/
     depends_on:
@@ -26,6 +26,15 @@ services:
       - POSTGRES_PASSWORD=quixo
       - POSTGRES_DB=quixo
     ports:
-        - "5433:5432"
+      - "5433:5432"
     expose:
-        - "5432"
+      - "5432"
+  advisor:
+    build: docker/go
+    volumes:
+      - ./advisor-go/src:/go/src
+    ports:
+      - "8001:8001"
+    expose:
+      - "8001"
+    command: CompileDaemon -directory="./src/quixo/" -command="./src/quixo/quixo"
