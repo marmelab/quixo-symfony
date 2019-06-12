@@ -26,11 +26,17 @@ services:
       - POSTGRES_PASSWORD=quixo
       - POSTGRES_DB=quixo
     ports:
-        - "5433:5432"
+      - "5433:5432"
     expose:
-        - "5432"
-  go:
+      - "5432"
+  advisor:
     image: golang:1.12.5
     volumes:
       - ./advisor-go:/advisor-go
+      - /docker/go/bin:/go/bin
     working_dir: /advisor-go
+    ports:
+      - "8001:8001"
+    expose:
+        - "8001"
+    command: CompileDaemon -command="./advisor-go"
