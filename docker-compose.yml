@@ -29,3 +29,8 @@ services:
         - "5433:5432"
     expose:
         - "5432"
+  go:
+    image: golang:1.12.5
+    volumes:
+      - ./advisor-go:/advisor-go
+    working_dir: /advisor-go
