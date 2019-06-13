@@ -27,7 +27,7 @@ class AdvisorManager
     }
 
     /**
-     * Return the team of the player stored in the sessoin
+     * Return the best advice for the player
      *
      * @param  Game $game
      *
