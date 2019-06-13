@@ -1,8 +1,18 @@
 <a id="advise" class="btn" href="javascript:void(0);">Advise me !</a>
 
 <script>
+    var isSelectedCube = "{{ game.selectedCube is not null }}";
+
     function listenOnClick() {
         document.getElementById('advise').addEventListener('click', getAdvice);
+    }
+
+    function displayAdvice(advice) {
+        coords = isSelectedCube ? advice.coordsEnd : advice.coordsStart;
+        element = document.querySelector(`[data-coords="${coords.x}-${coords.y}"]`);
+        if (element) {
+            element.classList.add('advised-cube');
+        }
     }
 
     function getAdvice() {
@@ -13,13 +23,11 @@
         xhr.onload = function () {
             // Process our return data
             if (xhr.status >= 200 && xhr.status < 300) {
-                console.log('success!', xhr);
+                var advice = JSON.parse(xhr.response);
+                displayAdvice(advice);
             } else {
-                // What do when the request fails
-                console.log('The request failed!');
+                console.err('Request failed');
             }
-            // Code that should run regardless of the request status
-            console.log('This always runs...');
         };
 
         xhr.open('GET', '{{ path('get-advise', { id: game.id }) }}');

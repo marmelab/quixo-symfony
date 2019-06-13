@@ -3,33 +3,14 @@
 namespace App\Manager;
 
 use App\Entity\Game;
-use App\Repository\GameRepository;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
-use Symfony\Component\HttpFoundation\Response;
 use Unirest\Request as Request;
+use Unirest\Response as Response;
 
 class AdvisorManager
 {
     private const ADVISOR_URL = 'http://advisor:8001';
 
-    private $gameRepository;
-    private $session;
-
-    /**
-     * __construct
-     *
-     * @param  GameRepository  $gameRepository
-     * @param  SessionInterface $session
-     *
-     * @return void
-     */
-    public function __construct(GameRepository $gameRepository, SessionInterface $session)
-    {
-        $this->gameRepository = $gameRepository;
-        $this->session = $session;
-    }
-
-    private function post($body)
+    private function post($body): Response
     {
         $headers = ['Accept' => 'application/json'];
         return Request::post(self::ADVISOR_URL.'/best-move', $headers, $body);
@@ -49,6 +30,18 @@ class AdvisorManager
             'Player' => $game->getCurrentPlayer(),
         ];
         $response = $this->post(json_encode($body));
-        dump($response);
+        $body = $response->body;
+
+        $advice = [
+            'coordsStart' => [
+                'x' => $body->CoordsStart->X,
+                'y' => $body->CoordsStart->Y,
+            ],
+            'coordsEnd' => [
+                'x' => $body->CoordsEnd->X,
+                'y' => $body->CoordsEnd->Y,
+            ],
+        ];
+        return $advice;
     }
 }
