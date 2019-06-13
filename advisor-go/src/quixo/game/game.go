@@ -97,8 +97,8 @@ func MoveCube(board Board, coordsStart Coords, coordsEnd Coords) [][]int {
 	}
 	if coordsStart.Y == coordsEnd.Y {
 		flippedGrid := FlipRowsAndCols(newGrid)
-		flippedGrid = shiftLine(newGrid, coordsStart.X, coordsEnd.X, coordsStart.Y, player)
-		return FlipRowsAndCols(flippedGrid)
+		shiftedFlippedGrid := shiftLine(flippedGrid, coordsStart.X, coordsEnd.X, coordsStart.Y, player)
+		return FlipRowsAndCols(shiftedFlippedGrid)
 	}
 	return nil
 }
@@ -113,12 +113,12 @@ func isPlayerCube(cubeValue int, playerValue int) bool {
 
 // Shift all values from xEnd to xStart in one row
 func shiftLine(grid [][]int, xStart int, xEnd int, rowIndex int, player int) [][]int {
-	newGrid := grid
+	newGrid := DuplicateGrid(grid)
 	step := 1
-	indexBound := xStart - 1
+	indexBound := xStart + 1
 	if xEnd > xStart {
 		step = -1
-		indexBound = xStart + 1
+		indexBound = xStart - 1
 	}
 	value := player
 	for index := xEnd; index != indexBound; index += step {
