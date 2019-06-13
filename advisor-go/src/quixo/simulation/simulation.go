@@ -7,8 +7,8 @@ import (
 
 // Move with coordsStart and coordsEnd
 type Move struct {
-	coordsStart game.Coords
-	coordsEnd   game.Coords
+	CoordsStart game.Coords
+	CoordsEnd   game.Coords
 }
 
 // GetBestMove return the best move
@@ -23,8 +23,8 @@ func GetBestMove(board game.Board) Move {
 		if score > maxScore {
 			maxScore = score
 			bestMove = Move{
-				coordsStart: movables[i].Coords,
-				coordsEnd:   destination,
+				CoordsStart: movables[i].Coords,
+				CoordsEnd:   destination,
 			}
 		}
 	}
