@@ -44,7 +44,7 @@ func GetMovablesCubes(board Board) []Cube {
 				Coords: Coords{X: x, Y: y},
 				Value:  grid[x][y],
 			}
-			if isOutsideCube(cube.Coords, len(grid[x])) && isPlayerCube(cube.Value, player) {
+			if isOutsideCube(cube.Coords, len(grid[x])) && cubeBelongsToPlayer(cube.Value, player) {
 				movables = append(movables, cube)
 			}
 		}
@@ -57,31 +57,47 @@ func GetAvailablesDestinations(grid [][]int, coords Coords) []Coords {
 	destinations := []Coords{}
 	x := coords.X
 	y := coords.Y
-	indexEnd := len(grid) - 1
+	size := len(grid)
 
-	if x == 0 || x == indexEnd {
-		if y != 0 {
-			destinations = append(destinations, Coords{X: x, Y: 0})
+	isOnStart := func(index int) bool {
+		return index == 0
+	}
+	isOnEnd := func(index int, size int) bool {
+		return index == size-1
+	}
+	isOnEdge := func(index int, size int) bool {
+		return isOnStart(index) || isOnEnd(index, size)
+	}
+	indexStart := 0
+	indexEnd := size - 1
+
+	// If on the top or the bottom of the board, else it's on the left or right
+	if isOnEdge(x, size) {
+		// If not on the left of the board, we can move it to the left
+		if !isOnStart(y) {
+			destinations = append(destinations, Coords{X: x, Y: indexStart})
 		}
-		if y != indexEnd {
+		// If not on the right of the board, we can move it to the right
+		if !isOnEnd(y, size) {
 			destinations = append(destinations, Coords{X: x, Y: indexEnd})
 		}
-		if x == 0 {
+		// If on the top of the board, we can move it to the bottom, else to the top
+		if isOnStart(x) {
 			destinations = append(destinations, Coords{X: indexEnd, Y: y})
 		} else {
-			destinations = append(destinations, Coords{X: 0, Y: y})
+			destinations = append(destinations, Coords{X: indexStart, Y: y})
 		}
-	} else if y == 0 || y == indexEnd {
-		if x != 0 {
-			destinations = append(destinations, Coords{X: 0, Y: y})
+	} else if isOnEdge(y, size) {
+		if !isOnStart(x) {
+			destinations = append(destinations, Coords{X: indexStart, Y: y})
 		}
-		if x != indexEnd {
+		if !isOnEnd(x, size) {
 			destinations = append(destinations, Coords{X: indexEnd, Y: y})
 		}
-		if y == 0 {
+		if isOnStart(y) {
 			destinations = append(destinations, Coords{X: x, Y: indexEnd})
 		} else {
-			destinations = append(destinations, Coords{X: x, Y: 0})
+			destinations = append(destinations, Coords{X: x, Y: indexStart})
 		}
 	}
 
@@ -107,7 +123,7 @@ func isOutsideCube(coords Coords, size int) bool {
 	return coords.X == 0 || coords.Y == 0 || coords.X == size-1 || coords.Y == size-1
 }
 
-func isPlayerCube(cubeValue int, playerValue int) bool {
+func cubeBelongsToPlayer(cubeValue int, playerValue int) bool {
 	return cubeValue == 0 || cubeValue == playerValue
 }
 
