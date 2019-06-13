@@ -162,22 +162,4 @@ class GameController extends AbstractController
         }
         return $this->redirectToRoute('game', ['id' => $id]);
     }
-
-    /**
-     * Return an advice for the player
-     *
-     * @param  Request        $request
-     * @param  GameManager    $gameManager
-     * @param  AdvisorManager $advisorManager
-     *
-     * @return void
-     */
-    public function getAdvise(Request $request, GameManager $gameManager, AdvisorManager $advisorManager)
-    {
-        $id = $request->attributes->getInt('id');
-        $game = $gameManager->getGame($id);
-
-        $advice = $advisorManager->getAdvice($game);
-        return $this->json($advice);
-    }
 }

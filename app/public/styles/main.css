@@ -129,3 +129,7 @@ button {
 .advised-cube {
     background-color: greenyellow;
 }
+
+.unadvised-cube {
+    background-color: red;
+}
