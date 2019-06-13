@@ -5,15 +5,22 @@ namespace App\Manager;
 use App\Entity\Game;
 use Unirest\Request as Request;
 use Unirest\Response as Response;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class AdvisorManager
 {
-    private const ADVISOR_URL = 'http://advisor:8001';
+
+    private $adivsorUrl;
+
+    public function __construct(ParameterBagInterface $params)
+    {
+        $this->adivsorUrl = $params->get('advisor_url');
+    }
 
     private function post($body): Response
     {
         $headers = ['Accept' => 'application/json'];
-        return Request::post(self::ADVISOR_URL.'/best-move', $headers, $body);
+        return Request::post($this->adivsorUrl.'/best-move', $headers, $body);
     }
 
     /**
