@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -12,6 +11,7 @@ use App\Domain\Coords;
 use App\Domain\TeamSelection;
 use App\Manager\GameManager;
 use App\Manager\SessionManager;
+use App\Manager\AdvisorManager;
 use App\Form\TeamType;
 use App\Form\CancelSelectionType;
 
@@ -161,5 +161,13 @@ class GameController extends AbstractController
             $gameManager->cancelSelection($game);
         }
         return $this->redirectToRoute('game', ['id' => $id]);
+    }
+
+    public function getAdvise(Request $request, GameManager $gameManager, AdvisorManager $advisorManager)
+    {
+        $id = $request->attributes->getInt('id');
+        $game = $gameManager->getGame($id);
+
+        $advisorManager->getAdvice($game);
     }
 }

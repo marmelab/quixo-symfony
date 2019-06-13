@@ -25,3 +25,7 @@ cancel-selection:
     path: /cancel-selection/{id}
     controller: App\Controller\GameController::cancelSelection
     methods: POST
+
+get-advise:
+    path: /get-advise/{id}
+    controller: App\Controller\GameController::getAdvise

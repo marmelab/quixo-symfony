@@ -10,11 +10,14 @@
 {% endblock %}
 {% block content %}
     {% include 'board.html.twig' %}
-    {% if cancelForm is defined and cancelForm %}
-        <div class="cancel-selection">
-            {{ form_start(cancelForm)}}
-            {{ form_row(cancelForm.cancel, { attr: { class: 'btn btn-cancel' }}) }}
-            {{ form_end(cancelForm) }}
-        </div>
-    {% endif %}
+    <div class="actions">
+        {% if cancelForm is defined and cancelForm %}
+                {{ form_start(cancelForm)}}
+                {{ form_row(cancelForm.cancel, { attr: { class: 'btn btn-cancel' }}) }}
+                {{ form_end(cancelForm) }}
+        {% endif %}
+        {% if not waitForPlayer %}
+            {% include 'adviser.html.twig' %}
+        {% endif %}
+    </div>
 {% endblock %}

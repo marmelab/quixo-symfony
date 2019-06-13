@@ -1,0 +1,30 @@
+<a id="advise" class="btn" href="javascript:void(0);">Advise me !</a>
+
+<script>
+    function listenOnClick() {
+        document.getElementById('advise').addEventListener('click', getAdvice);
+    }
+
+    function getAdvice() {
+        // Set up our HTTP request
+        var xhr = new XMLHttpRequest();
+
+        // Setup our listener to process completed requests
+        xhr.onload = function () {
+            // Process our return data
+            if (xhr.status >= 200 && xhr.status < 300) {
+                console.log('success!', xhr);
+            } else {
+                // What do when the request fails
+                console.log('The request failed!');
+            }
+            // Code that should run regardless of the request status
+            console.log('This always runs...');
+        };
+
+        xhr.open('GET', '{{ path('get-advise', { id: game.id }) }}');
+        xhr.send();
+    }
+
+    window.onload = listenOnClick;
+</script>
