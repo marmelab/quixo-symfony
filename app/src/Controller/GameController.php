@@ -100,7 +100,6 @@ class GameController extends AbstractController
         }
         if ($turnDone && $winner === null) {
             $gameManager->switchPlayer($game);
-            $gameManager->incrementsMoveCount($game);
         }
 
         $cancelForm = $this->createForm(CancelSelectionType::class, null, [
