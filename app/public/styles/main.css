@@ -118,6 +118,14 @@ button {
     cursor: pointer;
 }
 
-.cancel-selection {
+.actions {
     text-align: center;
+}
+
+.actions form {
+    display: inline-block;
+}
+
+.advised-cube {
+    background-color: greenyellow;
 }

@@ -9,6 +9,7 @@ services:
       - ./app:/app
     depends_on:
       - postgres
+      - advisor
   nginx:
     image: nginx:alpine
     ports:

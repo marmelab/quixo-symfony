@@ -32,7 +32,8 @@
         "symfony/maker-bundle": "^1.0",
         "symfony/profiler-pack": "*",
         "symfony/test-pack": "*",
-        "symfony/web-server-bundle": "*"
+        "symfony/web-server-bundle": "*",
+        "mashape/unirest-php": "3.*"
     },
     "config": {
         "preferred-install": {

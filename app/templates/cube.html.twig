@@ -7,7 +7,7 @@
 {% if isSelectedCube %}
     {% set className = className ~ ' selected-cube' %}
 {% endif %}
-<div class="{{className}}">
+<div class="{{className}}" data-coords="{{ x }}-{{ y }}">
     {% if movables|isCoordsInCoordsArray(x, y) %}
         <form
             class="form-cube"

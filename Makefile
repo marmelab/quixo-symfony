@@ -32,6 +32,14 @@ stop: ## Stop the server
 build: ## Build the dockers images
 	docker-compose build
 
-test: ## Test the code
+test-php:
 	docker-compose run --rm \
 		php bash -ci bin/phpunit
+
+test-go:
+	docker-compose run --rm \
+		advisor go test -v tests
+
+test: ## Test the go code and php code
+	$(MAKE) test-php
+	$(MAKE) test-go
