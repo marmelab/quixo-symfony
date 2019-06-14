@@ -11,14 +11,23 @@ type Move struct {
 	CoordsEnd   game.Coords
 }
 
-// GetBestMove return the best move
-func GetBestMove(board game.Board) Move {
+// GetBestMoveForPlayer return the best move for the player
+func GetBestMoveForPlayer(board game.Board) Move {
+	return getBestMove(board, false)
+}
+
+// GetWorstMoveForPlayer return the move that will benefit the most to the opponent player
+func GetWorstMoveForPlayer(board game.Board) Move {
+	return getBestMove(board, true)
+}
+
+func getBestMove(board game.Board, forOpponentPlayer bool) Move {
 	movables := game.GetMovablesCubes(board)
 
 	bestMove := Move{}
-	maxScore := 0
+	maxScore := -1
 	for i := 0; i < len(movables); i++ {
-		destination, score := getBestDestinationWithScore(board, movables[i])
+		destination, score := getBestDestinationWithScore(board, movables[i], forOpponentPlayer)
 
 		if score > maxScore {
 			maxScore = score
@@ -28,22 +37,25 @@ func GetBestMove(board game.Board) Move {
 			}
 		}
 	}
-
 	return bestMove
 }
 
-func getBestDestinationWithScore(board game.Board, cube game.Cube) (game.Coords, int) {
+func getBestDestinationWithScore(board game.Board, cube game.Cube, forOpponentPlayer bool) (game.Coords, int) {
 	grid := board.Grid
 	destinations := game.GetAvailablesDestinations(grid, cube.Coords)
-
-	maxScore := 0
+	maxScore := -1
 	bestDestination := game.Coords{}
 	for i := 0; i < len(destinations); i++ {
 		newGrid := game.MoveCube(board, cube.Coords, destinations[i])
 
+		player := board.Player
+		if forOpponentPlayer {
+			player = getOpponentPlayer(board.Player)
+		}
+
 		newBoard := game.Board{
 			Grid:   newGrid,
-			Player: board.Player,
+			Player: player,
 		}
 		score := scorer.GetBoardScore(newBoard)
 		if score > maxScore {
@@ -52,4 +64,8 @@ func getBestDestinationWithScore(board game.Board, cube game.Cube) (game.Coords,
 		}
 	}
 	return bestDestination, maxScore
+}
+
+func getOpponentPlayer(player int) int {
+	return player * -1
 }

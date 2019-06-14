@@ -27,5 +27,9 @@ cancel-selection:
     methods: POST
 
 get-advise:
-    path: /get-advise/{id}
-    controller: App\Controller\GameController::getAdvise
+    path: /get-advice/{id}
+    controller: App\Controller\AdviceController::getAdvice
+
+get-worst-advise:
+    path: /get-worst-advice/{id}
+    controller: App\Controller\AdviceController::getWorstAdvice

@@ -567,4 +567,22 @@ class GameManager
         $game->setSelectedCube(null);
         $this->gameRepository->save($game);
     }
+
+    /**
+     * getOpponentPlayer
+     *
+     * @param  int $player
+     *
+     * @return int
+     */
+    public function getOpponentPlayer(int $player): int
+    {
+        if ($player === GameManager::CROSS_TEAM) {
+            return GameManager::CIRCLE_TEAM;
+        }
+        if ($player === GameManager::CIRCLE_TEAM) {
+            return GameManager::CROSS_TEAM;
+        }
+        return GameManager::NEUTRAL_VALUE;
+    }
 }

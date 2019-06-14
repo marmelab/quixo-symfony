@@ -11,13 +11,13 @@
 {% block content %}
     {% include 'board.html.twig' %}
     <div class="actions">
+        {% if not waitForPlayer %}
+            {% include 'advice.html.twig' %}
+        {% endif %}
         {% if cancelForm is defined and cancelForm %}
                 {{ form_start(cancelForm)}}
                 {{ form_row(cancelForm.cancel, { attr: { class: 'btn btn-cancel' }}) }}
                 {{ form_end(cancelForm) }}
-        {% endif %}
-        {% if not waitForPlayer %}
-            {% include 'advice.html.twig' %}
         {% endif %}
     </div>
 {% endblock %}

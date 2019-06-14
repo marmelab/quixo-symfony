@@ -1,21 +1,35 @@
 <a id="advise" class="btn" href="javascript:void(0);">Advise me !</a>
+<a id="worst-advise" class="btn btn-cancel" href="javascript:void(0);">Prevent me to make him win !</a>
 
 <script>
     var isSelectedCube = "{{ game.selectedCube is not null }}";
 
     function listenOnClick() {
         document.getElementById('advise').addEventListener('click', getAdvice);
+        document.getElementById('worst-advise').addEventListener('click', getWorstAdvice);
     }
 
-    function displayAdvice(advice) {
-        coords = isSelectedCube ? advice.coordsEnd : advice.coordsStart;
-        element = document.querySelector(`[data-coords="${coords.x}-${coords.y}"]`);
-        if (element) {
-            element.classList.add('advised-cube');
+    function displayAdvice(className) {
+        return function(advice) {
+            coords = isSelectedCube ? advice.coordsEnd : advice.coordsStart;
+            element = document.querySelector(`[data-coords="${coords.x}-${coords.y}"]`);
+            if (element) {
+                element.classList.add(className);
+            }
         }
     }
 
     function getAdvice() {
+        var url = "{{ path('get-advise', { id: game.id }) }}"
+        request(url, displayAdvice('advised-cube'))
+    }
+
+    function getWorstAdvice() {
+        var url = "{{ path('get-worst-advise', { id: game.id }) }}"
+        request(url, displayAdvice('unadvised-cube'))
+    }
+
+    function request(url, callback) {
         // Set up our HTTP request
         var xhr = new XMLHttpRequest();
 
@@ -24,13 +38,13 @@
             // Process our return data
             if (xhr.status >= 200 && xhr.status < 300) {
                 var advice = JSON.parse(xhr.response);
-                displayAdvice(advice);
+                callback(advice);
             } else {
                 console.err('Request failed');
             }
         };
 
-        xhr.open('GET', '{{ path('get-advise', { id: game.id }) }}');
+        xhr.open('GET', url);
         xhr.send();
     }
 

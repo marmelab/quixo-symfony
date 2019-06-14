@@ -123,9 +123,13 @@ button {
 }
 
 .actions form {
-    display: inline-block;
+    margin-top: 2em;
 }
 
 .advised-cube {
     background-color: greenyellow;
+}
+
+.unadvised-cube {
+    background-color: red;
 }
