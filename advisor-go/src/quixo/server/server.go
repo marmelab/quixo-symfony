@@ -32,6 +32,7 @@ func worstMove(w http.ResponseWriter, r *http.Request) {
 
 func getBoardFromRequest(r *http.Request) game.Board {
 	decoder := json.NewDecoder(r.Body)
+	defer r.Body.Close()
 	var board game.Board
 	err := decoder.Decode(&board)
 	if err != nil {

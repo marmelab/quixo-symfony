@@ -16,7 +16,7 @@ func TestGetScoreFromEmptyBoard(t *testing.T) {
 		{neutralCube, neutralCube, neutralCube, neutralCube, neutralCube},
 		{neutralCube, neutralCube, neutralCube, neutralCube, neutralCube},
 	}
-	testBoard := game.GetBoard(initGrid, player)
+	testBoard := game.GetBoardWithNoCubeSelected(initGrid, player)
 	expectedScore := 0
 	score := scorer.GetBoardScore(testBoard)
 	if score != expectedScore {
@@ -34,7 +34,7 @@ func TestGetScoreFromBoardWithOneCube(t *testing.T) {
 		{neutralCube, neutralCube, neutralCube, neutralCube, neutralCube},
 		{neutralCube, neutralCube, neutralCube, neutralCube, neutralCube},
 	}
-	testBoard := game.GetBoard(initGrid, player)
+	testBoard := game.GetBoardWithNoCubeSelected(initGrid, player)
 	expectedScore := 1
 	score := scorer.GetBoardScore(testBoard)
 	if score != expectedScore {
@@ -52,7 +52,7 @@ func TestGetScoreFromBoardWithOpposedCubeOnLine(t *testing.T) {
 		{neutralCube, neutralCube, neutralCube, neutralCube, neutralCube},
 		{neutralCube, neutralCube, neutralCube, neutralCube, neutralCube},
 	}
-	testBoard := game.GetBoard(initGrid, player)
+	testBoard := game.GetBoardWithNoCubeSelected(initGrid, player)
 	expectedScore := 2
 	score := scorer.GetBoardScore(testBoard)
 	if score != expectedScore {
@@ -70,7 +70,7 @@ func TestGetScoreFromBoardWithMultiplesLines(t *testing.T) {
 		{player, neutralCube, player, neutralCube, player},
 		{neutralCube, neutralCube, neutralCube, neutralCube, neutralCube},
 	}
-	testBoard := game.GetBoard(initGrid, player)
+	testBoard := game.GetBoardWithNoCubeSelected(initGrid, player)
 	expectedScore := 3
 	score := scorer.GetBoardScore(testBoard)
 	if score != expectedScore {
@@ -88,7 +88,7 @@ func TestGetScoreFromBoardWithMultiplesLinesAndDiagonal(t *testing.T) {
 		{neutralCube, neutralCube, player, player, player},
 		{neutralCube, neutralCube, neutralCube, neutralCube, player},
 	}
-	testBoard := game.GetBoard(initGrid, player)
+	testBoard := game.GetBoardWithNoCubeSelected(initGrid, player)
 	expectedScore := 4
 	score := scorer.GetBoardScore(testBoard)
 	if score != expectedScore {
@@ -106,7 +106,7 @@ func TestGetScoreFromWinBoardInStraightLine(t *testing.T) {
 		{player, player, player, player, player},
 		{neutralCube, neutralCube, neutralCube, neutralCube, player},
 	}
-	testBoard := game.GetBoard(initGrid, player)
+	testBoard := game.GetBoardWithNoCubeSelected(initGrid, player)
 	expectedScore := 5
 	score := scorer.GetBoardScore(testBoard)
 	if score != expectedScore {
@@ -124,7 +124,7 @@ func TestGetScoreFromWinBoardInDiagonal(t *testing.T) {
 		{neutralCube, neutralCube, player, player, player},
 		{player, neutralCube, neutralCube, neutralCube, player},
 	}
-	testBoard := game.GetBoard(initGrid, player)
+	testBoard := game.GetBoardWithNoCubeSelected(initGrid, player)
 	expectedScore := 5
 	score := scorer.GetBoardScore(testBoard)
 	if score != expectedScore {

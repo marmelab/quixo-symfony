@@ -16,7 +16,7 @@ func TestGetMovablesCubesFromEmptyBoard(t *testing.T) {
 		{neutralCube, neutralCube, neutralCube, neutralCube, neutralCube},
 	}
 	player := 1
-	testBoard := game.GetBoard(initGrid, player)
+	testBoard := game.GetBoardWithNoCubeSelected(initGrid, player)
 
 	expectedMovables := []game.Cube{
 		game.Cube{game.Coords{0, 0}, neutralCube}, game.Cube{game.Coords{0, 1}, neutralCube}, game.Cube{game.Coords{0, 2}, neutralCube}, game.Cube{game.Coords{0, 3}, neutralCube}, game.Cube{game.Coords{0, 4}, neutralCube},
@@ -38,7 +38,7 @@ func TestGetMovablesCubesFromFullBoard(t *testing.T) {
 		{-1, 1, -1, -1, -1},
 	}
 	player := 1
-	testBoard := game.GetBoard(initGrid, player)
+	testBoard := game.GetBoardWithNoCubeSelected(initGrid, player)
 
 	expectedMovables := []game.Cube{
 		game.Cube{game.Coords{4, 1}, player},
@@ -100,7 +100,7 @@ func TestMoveCubeFromCornerWithEmptyBoard(t *testing.T) {
 		{neutralCube, neutralCube, neutralCube, neutralCube, neutralCube},
 	}
 	player := 1
-	testBoard := game.GetBoard(initGrid, player)
+	testBoard := game.GetBoardWithNoCubeSelected(initGrid, player)
 	coordsStart := game.Coords{0, 0}
 	coordsEnd := game.Coords{0, 4}
 
@@ -127,7 +127,7 @@ func TestMoveCubeFromMiddleWithShift(t *testing.T) {
 		{neutralCube, neutralCube, neutralCube, neutralCube, neutralCube},
 		{neutralCube, neutralCube, neutralCube, neutralCube, neutralCube},
 	}
-	testBoard := game.GetBoard(initGrid, player)
+	testBoard := game.GetBoardWithNoCubeSelected(initGrid, player)
 	coordsStart := game.Coords{2, 0}
 	coordsEnd := game.Coords{2, 4}
 
@@ -155,7 +155,7 @@ func TestMoveCubeFromMiddleWithShiftAndFlip(t *testing.T) {
 		{neutralCube, neutralCube, player, neutralCube, neutralCube},
 		{neutralCube, neutralCube, player, neutralCube, neutralCube},
 	}
-	testBoard := game.GetBoard(initGrid, player)
+	testBoard := game.GetBoardWithNoCubeSelected(initGrid, player)
 	coordsStart := game.Coords{0, 2}
 	coordsEnd := game.Coords{4, 2}
 
