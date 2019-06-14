@@ -20,6 +20,16 @@
         document.getElementById('worst-advise').addEventListener('click', getWorstAdvice);
     }
 
+    function getAdvice() {
+        var url = "{{ path('get-advise', { id: game.id }) }}"
+        request(url, displayAdvice('advised-cube'))
+    }
+
+    function getWorstAdvice() {
+        var url = "{{ path('get-worst-advise', { id: game.id }) }}"
+        request(url, displayAdvice('unadvised-cube'))
+    }
+
     function displayAdvice(className) {
         return function(response) {
             var advice = JSON.parse(response);
@@ -47,16 +57,6 @@
 
     function displayPreview(response) {
         document.getElementById('board-hook').innerHTML = response;
-    }
-
-    function getAdvice() {
-        var url = "{{ path('get-advise', { id: game.id }) }}"
-        request(url, displayAdvice('advised-cube'))
-    }
-
-    function getWorstAdvice() {
-        var url = "{{ path('get-worst-advise', { id: game.id }) }}"
-        request(url, displayAdvice('unadvised-cube'))
     }
 
     function request(url, callback) {
