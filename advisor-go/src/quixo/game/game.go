@@ -24,12 +24,21 @@ type Cube struct {
 	Value  int
 }
 
-// GetBoard return a Board from grid and player
-func GetBoard(grid [][]int, player int) Board {
+// GetBoardWithNoCubeSelected return a Board from grid and player
+func GetBoardWithNoCubeSelected(grid [][]int, player int) Board {
 	newBoard := Board{
 		Grid:   grid,
 		Player: player,
+		SelectedCube: Cube{
+			Coords: Coords{X: -1, Y: -1},
+		},
 	}
+	return newBoard
+}
+
+// GetBoard return a Board from grid, player and selectedCube
+func GetBoard(grid [][]int, player int, selectedCube Cube) Board {
+	newBoard := Board{grid, player, selectedCube}
 	return newBoard
 }
 

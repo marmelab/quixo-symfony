@@ -22,12 +22,22 @@ func GetWorstMoveForPlayer(board game.Board) Move {
 }
 
 func getBestMove(board game.Board, forOpponentPlayer bool) Move {
-	movables := game.GetMovablesCubes(board)
-
-	// If a cube is already selected, it's the only option to consider
 	if hasCubeSelected(board) {
-		movables = []game.Cube{board.SelectedCube}
+		return getBestMoveWithCubeSelected(board, forOpponentPlayer)
 	}
+	return getBestMoveWithNoCubeSelected(board, forOpponentPlayer)
+}
+
+func getBestMoveWithCubeSelected(board game.Board, forOpponentPlayer bool) Move {
+	destination, _ := getBestDestinationWithScore(board, board.SelectedCube, forOpponentPlayer)
+	return Move{
+		board.SelectedCube.Coords,
+		destination,
+	}
+}
+
+func getBestMoveWithNoCubeSelected(board game.Board, forOpponentPlayer bool) Move {
+	movables := game.GetMovablesCubes(board)
 	bestMove := Move{}
 	maxScore := -1
 	for i := 0; i < len(movables); i++ {

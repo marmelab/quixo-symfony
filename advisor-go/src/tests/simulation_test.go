@@ -22,7 +22,7 @@ func TestGetBestMoveForWinWithMultiplesOptions(t *testing.T) {
 		{neutralCube, neutralCube, neutralCube, neutralCube, neutralCube},
 		{neutralCube, neutralCube, neutralCube, neutralCube, neutralCube},
 	}
-	testBoard := game.GetBoard(initGrid, player)
+	testBoard := game.GetBoardWithNoCubeSelected(initGrid, player)
 	expectedScore := 5
 	bestMove := simulation.GetBestMoveForPlayer(testBoard)
 	newGrid := game.MoveCube(testBoard, bestMove.CoordsStart, bestMove.CoordsEnd)
@@ -45,7 +45,7 @@ func TestGetBestMoveForWinWithOneOption(t *testing.T) {
 		{neutralCube, neutralCube, neutralCube, neutralCube, opponentPlayer},
 		{neutralCube, neutralCube, neutralCube, neutralCube, neutralCube},
 	}
-	testBoard := game.GetBoard(initGrid, player)
+	testBoard := game.GetBoardWithNoCubeSelected(initGrid, player)
 	expectedMove := simulation.Move{
 		game.Coords{4, 4},
 		game.Coords{0, 4},
@@ -67,7 +67,7 @@ func TestGetBestMoveForWinInDiagonalAndWithShift(t *testing.T) {
 		{neutralCube, neutralCube, player, neutralCube, neutralCube},
 		{player, neutralCube, neutralCube, neutralCube, neutralCube},
 	}
-	testBoard := game.GetBoard(initGrid, player)
+	testBoard := game.GetBoardWithNoCubeSelected(initGrid, player)
 	expectedMove := simulation.Move{
 		game.Coords{3, 0},
 		game.Coords{3, 4},
@@ -90,12 +90,12 @@ func TestGetWorstMoveForOpponentWin(t *testing.T) {
 		{neutralCube, opponentPlayer, opponentPlayer, opponentPlayer, opponentPlayer},
 		{opponentPlayer, neutralCube, neutralCube, neutralCube, neutralCube},
 	}
-	testBoard := game.GetBoard(initGrid, player)
+	testBoard := game.GetBoardWithNoCubeSelected(initGrid, player)
 	expectedScore := 5
 	bestMove := simulation.GetWorstMoveForPlayer(testBoard)
 
 	newGrid := game.MoveCube(testBoard, bestMove.CoordsStart, bestMove.CoordsEnd)
-	opponentBoard := game.GetBoard(newGrid, opponentPlayer)
+	opponentBoard := game.GetBoardWithNoCubeSelected(newGrid, opponentPlayer)
 
 	score := scorer.GetBoardScore(opponentBoard)
 	if expectedScore != score {
@@ -118,12 +118,12 @@ func TestGetWorstMoveForOpponentWinWithOneMove(t *testing.T) {
 		{neutralCube, neutralCube, neutralCube, neutralCube, opponentPlayer},
 		{neutralCube, neutralCube, neutralCube, opponentPlayer, neutralCube},
 	}
-	testBoard := game.GetBoard(initGrid, player)
+	testBoard := game.GetBoardWithNoCubeSelected(initGrid, player)
 	expectedScore := 5
 	bestMove := simulation.GetWorstMoveForPlayer(testBoard)
 
 	newGrid := game.MoveCube(testBoard, bestMove.CoordsStart, bestMove.CoordsEnd)
-	opponentBoard := game.GetBoard(newGrid, opponentPlayer)
+	opponentBoard := game.GetBoardWithNoCubeSelected(newGrid, opponentPlayer)
 
 	score := scorer.GetBoardScore(opponentBoard)
 	if expectedScore != score {
@@ -135,5 +135,51 @@ func TestGetWorstMoveForOpponentWinWithOneMove(t *testing.T) {
 	}
 	if !reflect.DeepEqual(expectedMove, bestMove) {
 		t.Errorf("The worst move should be the one that make me lose")
+	}
+}
+
+func TestGetBestMoveWithSelectedCubeThatCantWin(t *testing.T) {
+	neutralCube := 0
+	player := 1
+	initGrid := [][]int{
+		{player, player, player, player, neutralCube},
+		{neutralCube, neutralCube, neutralCube, neutralCube, neutralCube},
+		{neutralCube, neutralCube, neutralCube, neutralCube, neutralCube},
+		{neutralCube, neutralCube, neutralCube, neutralCube, neutralCube},
+		{neutralCube, neutralCube, neutralCube, neutralCube, neutralCube},
+	}
+	selectedCube := game.Cube{game.Coords{0, 0}, player}
+	testBoard := game.GetBoard(initGrid, player, selectedCube)
+	expectedScore := 4
+	bestMove := simulation.GetBestMoveForPlayer(testBoard)
+	newGrid := game.MoveCube(testBoard, bestMove.CoordsStart, bestMove.CoordsEnd)
+	testBoard.Grid = newGrid
+	score := scorer.GetBoardScore(testBoard)
+
+	if expectedScore != score {
+		t.Errorf("I shouldn't win if I have selected a cube that can't make me win")
+	}
+}
+
+func TestGetBestMoveWithSelectedCubeForWin(t *testing.T) {
+	neutralCube := 0
+	player := 1
+	initGrid := [][]int{
+		{neutralCube, player, player, player, player},
+		{neutralCube, neutralCube, neutralCube, neutralCube, neutralCube},
+		{neutralCube, neutralCube, neutralCube, neutralCube, neutralCube},
+		{neutralCube, neutralCube, neutralCube, neutralCube, neutralCube},
+		{neutralCube, neutralCube, neutralCube, neutralCube, neutralCube},
+	}
+	selectedCube := game.Cube{game.Coords{0, 0}, player}
+	testBoard := game.GetBoard(initGrid, player, selectedCube)
+	expectedScore := 5
+	bestMove := simulation.GetBestMoveForPlayer(testBoard)
+	newGrid := game.MoveCube(testBoard, bestMove.CoordsStart, bestMove.CoordsEnd)
+	testBoard.Grid = newGrid
+	score := scorer.GetBoardScore(testBoard)
+
+	if expectedScore != score {
+		t.Errorf("I should win if I have selected a cube that can make me win")
 	}
 }
