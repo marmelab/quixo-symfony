@@ -569,13 +569,13 @@ class GameManager
     }
 
     /**
-     * getEnnemyPlayer
+     * getOpponentPlayer
      *
      * @param  int $player
      *
      * @return int
      */
-    public function getEnnemyPlayer(int $player): int
+    public function getOpponentPlayer(int $player): int
     {
         if ($player === GameManager::CROSS_TEAM) {
             return GameManager::CIRCLE_TEAM;

@@ -14,23 +14,42 @@ const port int = 8001
 func Start() {
 	http.HandleFunc("/", handle)
 	http.HandleFunc("/best-move", bestMove)
+	http.HandleFunc("/worst-move", worstMove)
 	http.ListenAndServe(":"+strconv.Itoa(port), nil)
 }
 
 func bestMove(w http.ResponseWriter, r *http.Request) {
+	board := getBoardFromRequest(r)
+	bestMove := simulation.GetBestMoveForPlayer(board)
+	sendResponse(w, bestMove)
+}
+
+func worstMove(w http.ResponseWriter, r *http.Request) {
+	board := getBoardFromRequest(r)
+	worstMove := simulation.GetWorstMoveForPlayer(board)
+	sendResponse(w, worstMove)
+}
+
+func getBoardFromRequest(r *http.Request) game.Board {
 	decoder := json.NewDecoder(r.Body)
 	var board game.Board
 	err := decoder.Decode(&board)
 	if err != nil {
 		panic(err)
 	}
-	bestMove := simulation.GetBestMove(board)
-	encodedMove, err := json.Marshal(bestMove)
-	w.Header().Set("content-type", "application/json")
-	w.Write([]byte(string(encodedMove)))
+	return board
 }
 
 func handle(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("content-type", "application/json")
 	w.Write([]byte(`{"message": "Hello world !"}`))
+}
+
+func sendResponse(w http.ResponseWriter, response interface{}) {
+	encodedResponse, err := json.Marshal(response)
+	if err != nil {
+		panic(err)
+	}
+	w.Header().Set("content-type", "application/json")
+	w.Write([]byte(string(encodedResponse)))
 }

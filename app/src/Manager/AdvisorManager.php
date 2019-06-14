@@ -20,10 +20,10 @@ class AdvisorManager
         $this->gameManager = $gameManager;
     }
 
-    private function post($body): Response
+    private function post($body, $endpoint): Response
     {
         $headers = ['Accept' => 'application/json'];
-        return Request::post($this->adivsorUrl.'/best-move', $headers, $body);
+        return Request::post($this->adivsorUrl.'/'.$endpoint, $headers, $body);
     }
 
     /**
@@ -33,13 +33,13 @@ class AdvisorManager
      *
      * @return int
      */
-    public function getAdvice(Game $game): array
+    public function getBestAdvice(Game $game): array
     {
         $body = [
             'Grid' => $game->getBoard(),
             'Player' => $game->getCurrentPlayer(),
         ];
-        $response = $this->post(json_encode($body));
+        $response = $this->post(json_encode($body), 'best-move');
 
          return $this->getAdviceFromResponseBody($response->body);
     }
@@ -56,10 +56,10 @@ class AdvisorManager
     {
         $body = [
             'Grid' => $game->getBoard(),
-            'Player' => $this->gameManager->getEnnemyPlayer($game->getCurrentPlayer()),
+            'Player' => $game->getCurrentPlayer(),
         ];
-        $response = $this->post(json_encode($body));
-
+        $response = $this->post(json_encode($body), 'worst-move');
+        dump($response);
         return $this->getAdviceFromResponseBody($response->body);
     }
 

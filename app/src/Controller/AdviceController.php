@@ -24,7 +24,7 @@ class AdviceController extends AbstractController
         $id = $request->attributes->getInt('id');
         $game = $gameManager->getGame($id);
 
-        $advice = $advisorManager->getAdvice($game);
+        $advice = $advisorManager->getBestAdvice($game);
         return $this->json($advice);
     }
 
