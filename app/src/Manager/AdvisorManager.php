@@ -82,16 +82,18 @@ class AdvisorManager
         $body = [
             'Grid' => $game->getBoard(),
             'Player' => $game->getCurrentPlayer(),
+            'SelectedCube' => [
+                'Coords' => ['X' => -1, 'Y' => -1],
+                'Value' => -1
+            ]
         ];
         $selectedCube = $game->getSelectedCube();
-        // Set to -1 because go will init struct to 0 if null
-        $cubeX = $selectedCube !== null ? $selectedCube['x'] : -1;
-        $cubeY = $selectedCube !== null ? $selectedCube['y'] : -1;
-        $value = $selectedCube !== null ? $game->getBoard()[$cubeX][$cubeY] : -1;
-        $body['SelectedCube'] = [
-            'Coords' => ['X' => $cubeX, 'Y' => $cubeY],
-            'Value' => $value,
-        ];
+        if ($selectedCube) {
+            $body['SelectedCube'] = [
+                'Coords' => ['X' => $selectedCube['x'], 'Y' => $selectedCube['y']],
+                'Value' => $game->getBoard()[$selectedCube['x']][$selectedCube['y']],
+            ];
+        }
 
         return json_encode($body);
     }

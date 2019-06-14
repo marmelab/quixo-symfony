@@ -67,10 +67,8 @@ func getBestDestinationWithScore(board game.Board, cube game.Cube, forOpponentPl
 			player = getOpponentPlayer(board.Player)
 		}
 
-		newBoard := game.Board{
-			Grid:   newGrid,
-			Player: player,
-		}
+		newBoard := game.GetBoardWithNoCubeSelected(newGrid, player)
+
 		score := scorer.GetBoardScore(newBoard)
 		if score > maxScore {
 			bestDestination = destinations[i]
