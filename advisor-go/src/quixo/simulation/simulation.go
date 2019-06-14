@@ -24,6 +24,10 @@ func GetWorstMoveForPlayer(board game.Board) Move {
 func getBestMove(board game.Board, forOpponentPlayer bool) Move {
 	movables := game.GetMovablesCubes(board)
 
+	// If a cube is already selected, it's the only option to consider
+	if hasCubeSelected(board) {
+		movables = []game.Cube{board.SelectedCube}
+	}
 	bestMove := Move{}
 	maxScore := -1
 	for i := 0; i < len(movables); i++ {
@@ -68,4 +72,9 @@ func getBestDestinationWithScore(board game.Board, cube game.Cube, forOpponentPl
 
 func getOpponentPlayer(player int) int {
 	return player * -1
+}
+
+func hasCubeSelected(board game.Board) bool {
+	cube := board.SelectedCube
+	return cube.Coords.X != -1 && cube.Coords.Y != -1
 }

@@ -35,13 +35,10 @@ class AdvisorManager
      */
     public function getBestAdvice(Game $game): array
     {
-        $body = [
-            'Grid' => $game->getBoard(),
-            'Player' => $game->getCurrentPlayer(),
-        ];
-        $response = $this->post(json_encode($body), 'best-move');
+        $body = $this->getBodyFromGame($game);
+        $response = $this->post($body, 'best-move');
 
-         return $this->getAdviceFromResponseBody($response->body);
+        return $this->getAdviceFromResponseBody($response->body);
     }
 
     /**
@@ -54,10 +51,7 @@ class AdvisorManager
      */
     public function getWorstAdvice(Game $game): array
     {
-        $body = [
-            'Grid' => $game->getBoard(),
-            'Player' => $game->getCurrentPlayer(),
-        ];
+        $body = $this->getBodyFromGame($game);
         $response = $this->post(json_encode($body), 'worst-move');
         return $this->getAdviceFromResponseBody($response->body);
     }
@@ -81,5 +75,24 @@ class AdvisorManager
                 'y' => $body->CoordsEnd->Y,
             ],
         ];
+    }
+
+    private function getBodyFromGame(Game $game): string
+    {
+        $body = [
+            'Grid' => $game->getBoard(),
+            'Player' => $game->getCurrentPlayer(),
+        ];
+        $selectedCube = $game->getSelectedCube();
+        // Set to -1 because go will init struct to 0 if null
+        $cubeX = $selectedCube !== null ? $selectedCube['x'] : -1;
+        $cubeY = $selectedCube !== null ? $selectedCube['y'] : -1;
+        $value = $selectedCube !== null ? $game->getBoard()[$cubeX][$cubeY] : -1;
+        $body['SelectedCube'] = [
+            'Coords' => ['X' => $cubeX, 'Y' => $cubeY],
+            'Value' => $value,
+        ];
+
+        return json_encode($body);
     }
 }

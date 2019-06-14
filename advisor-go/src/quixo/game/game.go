@@ -7,8 +7,9 @@ import (
 
 // Board with Grid and Player
 type Board struct {
-	Grid   [][]int
-	Player int
+	Grid         [][]int
+	Player       int
+	SelectedCube Cube
 }
 
 // Coords x and y
