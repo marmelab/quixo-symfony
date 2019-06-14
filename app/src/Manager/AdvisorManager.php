@@ -59,7 +59,6 @@ class AdvisorManager
             'Player' => $game->getCurrentPlayer(),
         ];
         $response = $this->post(json_encode($body), 'worst-move');
-        dump($response);
         return $this->getAdviceFromResponseBody($response->body);
     }
 
