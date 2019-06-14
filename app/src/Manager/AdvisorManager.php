@@ -52,7 +52,7 @@ class AdvisorManager
     public function getWorstAdvice(Game $game): array
     {
         $body = $this->getBodyFromGame($game);
-        $response = $this->post(json_encode($body), 'worst-move');
+        $response = $this->post($body, 'worst-move');
         return $this->getAdviceFromResponseBody($response->body);
     }
 
