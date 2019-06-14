@@ -47,6 +47,14 @@ class AdviceController extends AbstractController
         return $this->json($advice);
     }
 
+    /**
+     * Return a board view of the advice
+     *
+     * @param  Request     $request
+     * @param  GameManager $gameManager
+     *
+     * @return Response
+     */
     public function previewAdvice(Request $request, GameManager $gameManager): Response
     {
         $id = $request->attributes->getInt('id');
