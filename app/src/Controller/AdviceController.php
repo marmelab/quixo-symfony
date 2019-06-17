@@ -48,6 +48,24 @@ class AdviceController extends AbstractController
     }
 
     /**
+     * Return the advice that make my opponent less good
+     *
+     * @param  Request        $request
+     * @param  GameManager    $gameManager
+     * @param  AdvisorManager $advisorManager
+     *
+     * @return Response
+     */
+    public function getAdviceThatMakeMyOpponentLose(Request $request, GameManager $gameManager, AdvisorManager $advisorManager): Response
+    {
+        $id = $request->attributes->getInt('id');
+        $game = $gameManager->getGame($id);
+
+        $advice = $advisorManager->getAdviceThatMakeMyOpponentLose($game);
+        return $this->json($advice);
+    }
+
+    /**
      * Return a board view of the advice
      *
      * @param  Request     $request

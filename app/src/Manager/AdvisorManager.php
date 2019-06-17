@@ -37,7 +37,6 @@ class AdvisorManager
     {
         $body = $this->getBodyFromGame($game);
         $response = $this->post($body, 'best-move');
-
         return $this->getAdviceFromResponseBody($response->body);
     }
 
@@ -53,6 +52,13 @@ class AdvisorManager
     {
         $body = $this->getBodyFromGame($game);
         $response = $this->post($body, 'worst-move');
+        return $this->getAdviceFromResponseBody($response->body);
+    }
+
+    public function getAdviceThatMakeMyOpponentLose(Game $game): array
+    {
+        $body = $this->getBodyFromGame($game);
+        $response = $this->post($body, 'opponent-lose-move');
         return $this->getAdviceFromResponseBody($response->body);
     }
 

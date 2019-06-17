@@ -38,3 +38,7 @@ preview-advice:
     path: /preview-advice/{id}/{xStart}/{yStart}/{xEnd}/{yEnd}
     controller: App\Controller\AdviceController::previewAdvice
     defaults: {xStart: -1, yStart: -1, xEnd: -1, yEnd: -1}
+
+get-advice-opponent-lose:
+    path: /get-advice-opponent-lose/{id}
+    controller: App\Controller\AdviceController::getAdviceThatMakeMyOpponentLose
