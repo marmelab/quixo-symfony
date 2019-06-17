@@ -33,3 +33,8 @@ get-advise:
 get-worst-advise:
     path: /get-worst-advice/{id}
     controller: App\Controller\AdviceController::getWorstAdvice
+
+preview-advice:
+    path: /preview-advice/{id}/{xStart}/{yStart}/{xEnd}/{yEnd}
+    controller: App\Controller\AdviceController::previewAdvice
+    defaults: {xStart: -1, yStart: -1, xEnd: -1, yEnd: -1}

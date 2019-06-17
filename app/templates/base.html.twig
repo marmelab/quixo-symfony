@@ -22,3 +22,30 @@
     </body>
     {% block javascript '' %}
 </html>
+
+<script>
+    function initModal() {
+        var modal = document.getElementById("modal");
+        var btn = document.getElementById("modal-see-advice");
+        var span = document.getElementsByClassName("close")[0];
+
+        if (!modal || !btn) {
+            return;
+        }
+        btn.onclick = function() {
+            modal.style.display = "block";
+        }
+
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    }
+    window.addEventListener("load", initModal);
+</script>

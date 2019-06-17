@@ -1,5 +1,16 @@
 <a id="advise" class="btn" href="javascript:void(0);">Advise me !</a>
 <a id="worst-advise" class="btn btn-cancel" href="javascript:void(0);">Prevent me to make him win !</a>
+<button id="modal-see-advice" class="btn hidden">See the advice result</button>
+<!-- The Modal -->
+<div id="modal" class="modal">
+    <!-- Modal content -->
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <div id="board-hook">
+            <p>Loading</p>
+        </div>
+    </div>
+</div>
 
 <script>
     var isSelectedCube = "{{ game.selectedCube is not null }}";
@@ -7,16 +18,6 @@
     function listenOnClick() {
         document.getElementById('advise').addEventListener('click', getAdvice);
         document.getElementById('worst-advise').addEventListener('click', getWorstAdvice);
-    }
-
-    function displayAdvice(className) {
-        return function(advice) {
-            coords = isSelectedCube ? advice.coordsEnd : advice.coordsStart;
-            element = document.querySelector(`[data-coords="${coords.x}-${coords.y}"]`);
-            if (element) {
-                element.classList.add(className);
-            }
-        }
     }
 
     function getAdvice() {
@@ -29,6 +30,35 @@
         request(url, displayAdvice('unadvised-cube'))
     }
 
+    function displayAdvice(className) {
+        return function(response) {
+            var advice = JSON.parse(response);
+            coords = isSelectedCube ? advice.coordsEnd : advice.coordsStart;
+            element = document.querySelector(`[data-coords="${coords.x}-${coords.y}"]`);
+            if (element) {
+                element.classList.add(className);
+                initPreviewAdvice(advice)
+            }
+        }
+    }
+
+    function initPreviewAdvice(advice) {
+        var adviceBtn = document.getElementById('modal-see-advice');
+        adviceBtn.classList.remove('hidden');
+        adviceBtn.addEventListener('click', getPreviewAdvice(advice))
+    }
+
+    function getPreviewAdvice(advice) {
+        return function () {
+            var url = getPreviewAdviceUrlWithParameters(advice);
+            request(url, displayPreview)
+        }
+    }
+
+    function displayPreview(response) {
+        document.getElementById('board-hook').innerHTML = response;
+    }
+
     function request(url, callback) {
         // Set up our HTTP request
         var xhr = new XMLHttpRequest();
@@ -37,15 +67,19 @@
         xhr.onload = function () {
             // Process our return data
             if (xhr.status >= 200 && xhr.status < 300) {
-                var advice = JSON.parse(xhr.response);
-                callback(advice);
+                callback(xhr.response);
             } else {
-                console.err('Request failed');
+                console.error('Request failed');
             }
         };
 
         xhr.open('GET', url);
         xhr.send();
+    }
+
+    function getPreviewAdviceUrlWithParameters(advice) {
+        var url = "{{ path('preview-advice', { id: game.id }) }}"
+        return `${url}/${advice.coordsStart.x}/${advice.coordsStart.y}/${advice.coordsEnd.x}/${advice.coordsEnd.y}`
     }
 
     window.onload = listenOnClick;
