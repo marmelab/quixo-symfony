@@ -3,12 +3,84 @@ package simulation
 import (
 	"quixo/game"
 	"quixo/scorer"
+	"sync"
+	"time"
+
+	"github.com/davecgh/go-spew/spew"
 )
 
 // Move with coordsStart and coordsEnd
 type Move struct {
 	CoordsStart game.Coords
 	CoordsEnd   game.Coords
+}
+
+// BoardNode ...
+type BoardNode struct {
+	Ancestor *BoardNode
+	Board    game.Board
+	Score    int
+	Move     Move
+}
+
+// GetAllWinnablesBoardNode ...
+func GetAllWinnablesBoardNode(board game.Board) []BoardNode {
+	timeStart := time.Now()
+	nodes := []BoardNode{{
+		Board: board,
+		Score: scorer.GetBoardScore(board),
+	}}
+	leaves := []BoardNode{}
+	for time.Now().Sub(timeStart).Seconds() < 30000 {
+
+		var wg sync.WaitGroup
+		nodesChannel := make(chan BoardNode, len(nodes)*16*3)
+
+		for _, node := range nodes {
+			wg.Add(1)
+			go MakeAllMovesForBoard(nodesChannel, node, &wg)
+		}
+		wg.Wait()
+
+		close(nodesChannel)
+
+		nodes = []BoardNode{}
+
+		for node := range nodesChannel {
+			spew.Dump(node.Score)
+			if node.Score == 5 {
+				leaves = append(leaves, node)
+			} else {
+				nodes = append(nodes, node)
+			}
+		}
+	}
+	return leaves
+}
+
+// MakeAllMovesForBoard and write created nodes in channel
+func MakeAllMovesForBoard(nodesChan chan<- BoardNode, node BoardNode, wg *sync.WaitGroup) {
+	moves := getAllMoves(node.Board)
+	for _, move := range moves {
+		newGrid := game.MoveCube(node.Board, move.CoordsStart, move.CoordsEnd)
+		newBoard := game.GetBoardWithNoCubeSelected(newGrid, node.Board.Player)
+		score := scorer.GetBoardScore(newBoard)
+		nodesChan <- BoardNode{&node, newBoard, score, move}
+	}
+	wg.Done()
+}
+
+func getAllMoves(board game.Board) []Move {
+	moves := []Move{}
+	movables := game.GetMovablesCubes(board)
+	for _, movable := range movables {
+		coordsStart := movable.Coords
+		destinations := game.GetAvailablesDestinations(board.Grid, coordsStart)
+		for _, destination := range destinations {
+			moves = append(moves, Move{coordsStart, destination})
+		}
+	}
+	return moves
 }
 
 // GetBestMoveForPlayer return the best move for the player

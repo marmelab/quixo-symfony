@@ -6,6 +6,8 @@ import (
 	"quixo/simulation"
 	"reflect"
 	"testing"
+
+	"github.com/davecgh/go-spew/spew"
 )
 
 /*
@@ -233,4 +235,22 @@ func TestGetMoveThatMakeMyOpponentLose2(t *testing.T) {
 	if expectedScore != score {
 		t.Errorf("It should make my opponent score lower")
 	}
+}
+
+func TestRoutines(t *testing.T) {
+	neutralCube := 0
+	player := 1
+	opponentPlayer := -1
+	initGrid := [][]int{
+		{opponentPlayer, opponentPlayer, opponentPlayer, neutralCube, neutralCube},
+		{neutralCube, neutralCube, neutralCube, neutralCube, neutralCube},
+		{neutralCube, neutralCube, neutralCube, neutralCube, player},
+		{neutralCube, neutralCube, neutralCube, neutralCube, player},
+		{neutralCube, neutralCube, neutralCube, player, neutralCube},
+	}
+	// game.DrawBoard(initGrid)
+	testBoard := game.GetBoardWithNoCubeSelected(initGrid, player)
+
+	leafs := simulation.GetAllWinnablesBoardNode(testBoard)
+	spew.Dump(leafs)
 }

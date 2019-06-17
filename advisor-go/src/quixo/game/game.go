@@ -186,6 +186,7 @@ func DrawBoard(grid [][]int) int {
 	for i := 0; i < len(grid); i++ {
 		for j := 0; j < len(grid[i]); j++ {
 			fmt.Printf(strconv.Itoa(grid[i][j]))
+			fmt.Printf("\t")
 		}
 		fmt.Printf("\n")
 	}
