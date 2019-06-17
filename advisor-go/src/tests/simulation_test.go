@@ -252,5 +252,5 @@ func TestRoutines(t *testing.T) {
 	testBoard := game.GetBoardWithNoCubeSelected(initGrid, player)
 
 	leafs := simulation.GetAllWinnablesBoardNode(testBoard)
-	spew.Dump(leafs)
+	spew.Dump(leafs[0])
 }

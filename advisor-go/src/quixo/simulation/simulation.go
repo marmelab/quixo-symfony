@@ -5,8 +5,6 @@ import (
 	"quixo/scorer"
 	"sync"
 	"time"
-
-	"github.com/davecgh/go-spew/spew"
 )
 
 // Move with coordsStart and coordsEnd
@@ -31,7 +29,7 @@ func GetAllWinnablesBoardNode(board game.Board) []BoardNode {
 		Score: scorer.GetBoardScore(board),
 	}}
 	leaves := []BoardNode{}
-	for time.Now().Sub(timeStart).Seconds() < 30000 {
+	for time.Now().Sub(timeStart).Seconds() < 1 {
 
 		var wg sync.WaitGroup
 		nodesChannel := make(chan BoardNode, len(nodes)*16*3)
@@ -47,7 +45,6 @@ func GetAllWinnablesBoardNode(board game.Board) []BoardNode {
 		nodes = []BoardNode{}
 
 		for node := range nodesChannel {
-			spew.Dump(node.Score)
 			if node.Score == 5 {
 				leaves = append(leaves, node)
 			} else {
