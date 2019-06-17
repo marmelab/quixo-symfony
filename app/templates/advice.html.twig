@@ -1,5 +1,6 @@
-<a id="advise" class="btn" href="javascript:void(0);">Advise me !</a>
-<a id="worst-advise" class="btn btn-cancel" href="javascript:void(0);">Prevent me to make him win !</a>
+<a id="advise" class="btn" href="javascript:void(0);">Make me Win</a>
+<a id="advise-opponent-lose" class="btn" href="javascript:void(0);">Make him lose</a>
+<a id="worst-advise" class="btn btn-cancel" href="javascript:void(0);">Stop me to make him win</a>
 <button id="modal-see-advice" class="btn hidden">See the advice result</button>
 <!-- The Modal -->
 <div id="modal" class="modal">
@@ -18,16 +19,25 @@
     function listenOnClick() {
         document.getElementById('advise').addEventListener('click', getAdvice);
         document.getElementById('worst-advise').addEventListener('click', getWorstAdvice);
+        document.getElementById('advise-opponent-lose').addEventListener('click', getAdviceThatMakeOpponentLose);
     }
 
     function getAdvice() {
+        cleanBoardClasses()
         var url = "{{ path('get-advise', { id: game.id }) }}"
         request(url, displayAdvice('advised-cube'))
     }
 
     function getWorstAdvice() {
+        cleanBoardClasses()
         var url = "{{ path('get-worst-advise', { id: game.id }) }}"
         request(url, displayAdvice('unadvised-cube'))
+    }
+
+    function getAdviceThatMakeOpponentLose() {
+        cleanBoardClasses()
+        var url = "{{ path('get-advice-opponent-lose', { id: game.id }) }}"
+        request(url, displayAdvice('advised-cube'))
     }
 
     function displayAdvice(className) {
@@ -80,6 +90,16 @@
     function getPreviewAdviceUrlWithParameters(advice) {
         var url = "{{ path('preview-advice', { id: game.id }) }}"
         return `${url}/${advice.coordsStart.x}/${advice.coordsStart.y}/${advice.coordsEnd.x}/${advice.coordsEnd.y}`
+    }
+
+    function cleanBoardClasses() {
+        var elements = Array.from(document.getElementsByClassName('unadvised-cube')).concat(
+            Array.from(document.getElementsByClassName('advised-cube'))
+        );
+        elements.forEach(function(el) {
+            el.classList.remove('unadvised-cube');
+            el.classList.remove('advised-cube');
+        })
     }
 
     window.onload = listenOnClick;

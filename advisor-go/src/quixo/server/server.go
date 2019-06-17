@@ -15,6 +15,7 @@ func Start() {
 	http.HandleFunc("/", handle)
 	http.HandleFunc("/best-move", bestMove)
 	http.HandleFunc("/worst-move", worstMove)
+	http.HandleFunc("/opponent-lose-move", makeOpponentLoseMove)
 	http.ListenAndServe(":"+strconv.Itoa(port), nil)
 }
 
@@ -28,6 +29,12 @@ func worstMove(w http.ResponseWriter, r *http.Request) {
 	board := getBoardFromRequest(r)
 	worstMove := simulation.GetWorstMoveForPlayer(board)
 	sendResponse(w, worstMove)
+}
+
+func makeOpponentLoseMove(w http.ResponseWriter, r *http.Request) {
+	board := getBoardFromRequest(r)
+	move := simulation.GetMoveThatMakeMyOpponentLose(board)
+	sendResponse(w, move)
 }
 
 func getBoardFromRequest(r *http.Request) game.Board {
