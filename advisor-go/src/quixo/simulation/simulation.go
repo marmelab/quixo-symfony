@@ -16,35 +16,54 @@ func GetBestMoveForPlayer(board game.Board) Move {
 	return getBestMove(board, false)
 }
 
-// GetWorstMoveForPlayer return the move that will benefit the most to the opponent player
+// GetWorstMoveForPlayer return the move that will benefit the most for the opponent player
 func GetWorstMoveForPlayer(board game.Board) Move {
 	return getBestMove(board, true)
 }
 
-func getBestMove(board game.Board, forOpponentPlayer bool) Move {
+// GetMoveThatMakeMyOpponentLose return the move that will be the worst for the opponent
+func GetMoveThatMakeMyOpponentLose(board game.Board) Move {
+	isSmallerThan := func(int1 int, int2 int) bool { return int1 < int2 }
 	if hasCubeSelected(board) {
-		return getBestMoveWithCubeSelected(board, forOpponentPlayer)
+		return getMoveWithCubeSelected(board, true, isSmallerThan)
 	}
-	return getBestMoveWithNoCubeSelected(board, forOpponentPlayer)
+	return getMoveWithNoCubeSelected(board, true, isSmallerThan)
 }
 
-func getBestMoveWithCubeSelected(board game.Board, forOpponentPlayer bool) Move {
-	destination, _ := getBestDestinationWithScore(board, board.SelectedCube, forOpponentPlayer)
+func getBestMove(board game.Board, forOpponentPlayer bool) Move {
+	isGreaterThan := func(int1 int, int2 int) bool { return int1 > int2 }
+
+	if hasCubeSelected(board) {
+		return getMoveWithCubeSelected(board, forOpponentPlayer, isGreaterThan)
+	}
+	return getMoveWithNoCubeSelected(board, forOpponentPlayer, isGreaterThan)
+}
+
+func getMoveWithCubeSelected(
+	board game.Board,
+	forOpponentPlayer bool,
+	comparator func(int, int) bool,
+) Move {
+	destination, _ := getBestDestinationWithScore(board, board.SelectedCube, forOpponentPlayer, comparator)
 	return Move{
 		board.SelectedCube.Coords,
 		destination,
 	}
 }
 
-func getBestMoveWithNoCubeSelected(board game.Board, forOpponentPlayer bool) Move {
+func getMoveWithNoCubeSelected(
+	board game.Board,
+	forOpponentPlayer bool,
+	comparator func(int, int) bool,
+) Move {
 	movables := game.GetMovablesCubes(board)
 	bestMove := Move{}
-	maxScore := -1
+	bestScore := 0
 	for i := 0; i < len(movables); i++ {
-		destination, score := getBestDestinationWithScore(board, movables[i], forOpponentPlayer)
+		destination, score := getBestDestinationWithScore(board, movables[i], forOpponentPlayer, comparator)
 
-		if score > maxScore {
-			maxScore = score
+		if comparator(score, bestScore) || i == 0 {
+			bestScore = score
 			bestMove = Move{
 				CoordsStart: movables[i].Coords,
 				CoordsEnd:   destination,
@@ -54,10 +73,15 @@ func getBestMoveWithNoCubeSelected(board game.Board, forOpponentPlayer bool) Mov
 	return bestMove
 }
 
-func getBestDestinationWithScore(board game.Board, cube game.Cube, forOpponentPlayer bool) (game.Coords, int) {
+func getBestDestinationWithScore(
+	board game.Board,
+	cube game.Cube,
+	forOpponentPlayer bool,
+	comparator func(int, int) bool,
+) (game.Coords, int) {
 	grid := board.Grid
 	destinations := game.GetAvailablesDestinations(grid, cube.Coords)
-	maxScore := -1
+	bestScore := 0
 	bestDestination := game.Coords{}
 	for i := 0; i < len(destinations); i++ {
 		newGrid := game.MoveCube(board, cube.Coords, destinations[i])
@@ -70,12 +94,12 @@ func getBestDestinationWithScore(board game.Board, cube game.Cube, forOpponentPl
 		newBoard := game.GetBoardWithNoCubeSelected(newGrid, player)
 
 		score := scorer.GetBoardScore(newBoard)
-		if score > maxScore {
+		if comparator(score, bestScore) || i == 0 {
 			bestDestination = destinations[i]
-			maxScore = score
+			bestScore = score
 		}
 	}
-	return bestDestination, maxScore
+	return bestDestination, bestScore
 }
 
 func getOpponentPlayer(player int) int {

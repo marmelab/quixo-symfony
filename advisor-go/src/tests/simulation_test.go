@@ -183,3 +183,54 @@ func TestGetBestMoveWithSelectedCubeForWin(t *testing.T) {
 		t.Errorf("I should win if I have selected a cube that can make me win")
 	}
 }
+
+func TestGetMoveThatMakeMyOpponentLose(t *testing.T) {
+	neutralCube := 0
+	player := 1
+	opponentPlayer := -1
+	initGrid := [][]int{
+		{neutralCube, opponentPlayer, opponentPlayer, opponentPlayer, opponentPlayer},
+		{neutralCube, neutralCube, neutralCube, neutralCube, neutralCube},
+		{neutralCube, neutralCube, neutralCube, neutralCube, neutralCube},
+		{neutralCube, neutralCube, neutralCube, neutralCube, neutralCube},
+		{neutralCube, neutralCube, neutralCube, neutralCube, neutralCube},
+	}
+
+	testBoard := game.GetBoardWithNoCubeSelected(initGrid, player)
+	expectedScore := 3
+
+	moveThatMakeOpponentLose := simulation.GetMoveThatMakeMyOpponentLose(testBoard)
+
+	newGrid := game.MoveCube(testBoard, moveThatMakeOpponentLose.CoordsStart, moveThatMakeOpponentLose.CoordsEnd)
+	opponentBoard := game.GetBoardWithNoCubeSelected(newGrid, opponentPlayer)
+
+	score := scorer.GetBoardScore(opponentBoard)
+	if expectedScore != score {
+		t.Errorf("It should make my opponent score lower")
+	}
+}
+
+func TestGetMoveThatMakeMyOpponentLose2(t *testing.T) {
+	neutralCube := 0
+	player := 1
+	opponentPlayer := -1
+	initGrid := [][]int{
+		{opponentPlayer, opponentPlayer, opponentPlayer, neutralCube, neutralCube},
+		{neutralCube, neutralCube, neutralCube, neutralCube, neutralCube},
+		{neutralCube, neutralCube, neutralCube, neutralCube, player},
+		{neutralCube, neutralCube, neutralCube, neutralCube, player},
+		{neutralCube, neutralCube, neutralCube, neutralCube, neutralCube},
+	}
+
+	testBoard := game.GetBoardWithNoCubeSelected(initGrid, player)
+	expectedScore := 2
+
+	move := simulation.GetMoveThatMakeMyOpponentLose(testBoard)
+
+	newGrid := game.MoveCube(testBoard, move.CoordsStart, move.CoordsEnd)
+	opponentBoard := game.GetBoardWithNoCubeSelected(newGrid, opponentPlayer)
+	score := scorer.GetBoardScore(opponentBoard)
+	if expectedScore != score {
+		t.Errorf("It should make my opponent score lower")
+	}
+}
