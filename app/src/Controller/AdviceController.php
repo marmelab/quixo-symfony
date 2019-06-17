@@ -60,13 +60,7 @@ class AdviceController extends AbstractController
         $id = $request->attributes->getInt('id');
         $game = $gameManager->getGame($id);
 
-        $xStart = $request->attributes->getInt('xStart');
-        $yStart = $request->attributes->getInt('yStart');
-        $xEnd = $request->attributes->getInt('xEnd');
-        $yEnd = $request->attributes->getInt('yEnd');
-
-        $coordsStart = new Coords($xStart, $yStart);
-        $coordsEnd = new Coords($xEnd, $yEnd);
+        list($coordsStart, $coordsEnd) = $this->getCoordsFromRequest($request);
 
         $newBoard = $gameManager->moveCube($game, $coordsStart, $coordsEnd, $game->getCurrentPlayer());
         $game->setBoard($newBoard);
@@ -74,5 +68,24 @@ class AdviceController extends AbstractController
         return $this->render('board.html.twig', [
             'game' => $game
         ]);
+    }
+
+    /**
+     * Return coords start & coords end from request
+     *
+     * @param  Request $request
+     *
+     * @return array
+     */
+    private function getCoordsFromRequest(Request $request): array
+    {
+        $xStart = $request->attributes->getInt('xStart');
+        $yStart = $request->attributes->getInt('yStart');
+        $xEnd = $request->attributes->getInt('xEnd');
+        $yEnd = $request->attributes->getInt('yEnd');
+
+        $coordsStart = new Coords($xStart, $yStart);
+        $coordsEnd = new Coords($xEnd, $yEnd);
+        return [$coordsStart, $coordsEnd];
     }
 }
